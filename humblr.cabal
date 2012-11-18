@@ -53,7 +53,7 @@ library
   -- other-modules:       
   
   -- Other library packages from which modules are imported.
-  build-depends:       base ==4.6.*, lens ==3.2.*, mtl ==2.1.*, aeson ==0.6.*, attoparsec ==0.10.*, bytestring ==0.10.*, conduit ==0.5.*, attoparsec-conduit ==0.5.*, http-conduit ==1.8.*, http-types ==0.7.*, authenticate-oauth ==1.4.*
+  build-depends:       base ==4.6.*,  mtl ==2.1.*, aeson ==0.6.*, attoparsec ==0.10.*, bytestring ==0.10.*, conduit ==0.5.*, attoparsec-conduit ==0.5.*, http-conduit ==1.8.*, http-types ==0.7.*, authenticate-oauth ==1.4.*
   
   -- Directories containing source files.
   hs-source-dirs:      src
