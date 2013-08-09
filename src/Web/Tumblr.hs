@@ -23,7 +23,7 @@ import Web.Authenticate.OAuth
 
 newtype AvatarSize = AvatarSize {getAvatarSize :: Int}
 
-data PostType = Text | Quote | Link | Answer | Video | Audio | Photo | Chat deriving (Eq, show)
+data PostType = Text | Quote | Link | Answer | Video | Audio | Photo | Chat deriving (Eq, Show)
   
 data PostFilter = PlainText | Raw deriving (Eq, Show)
 
@@ -61,7 +61,7 @@ tumblrAvatar baseHostname msize manager = do
   let myRequest = tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> B.pack "/avatar" <> maybe B.empty (B.pack . show . getAvatarSize) msize,
                                      checkStatus = \stat -> if stat == movedPermanently301 then const Nothing else checkStatus def stat
                                     }
-  resp <- responseBody <$> http myRequest manager
+  resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser json
 
 tumblrLikes :: (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader k m) => BaseHostname -> Maybe Int -> Maybe Int -> Manager -> m Value
