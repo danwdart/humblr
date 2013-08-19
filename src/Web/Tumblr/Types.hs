@@ -33,7 +33,7 @@ instance FromJSON BlogInfo where
   parseJSON _ = empty
   
   
-data Avatar = Avatar { avatarURL :: String }
+data Avatar = Avatar { avatarURL :: String } deriving (Show, Eq)
 
 instance FromJSON Avatar where
   parseJSON (Object v) = Avatar <$> v .: "avatar_url"
@@ -43,6 +43,7 @@ instance FromJSON Avatar where
 data Likes = Likes
              { likedPosts :: [Post]
              , likedCount :: Int }
+             deriving (Show, Eq)
              
 instance FromJSON Likes where
   parseJSON (Object v) = Likes <$> 
@@ -51,7 +52,7 @@ instance FromJSON Likes where
   parseJSON _ = empty
   
   
-data Followers = Followers { followers :: [User] }
+data Followers = Followers { followers :: [User] } deriving (Show, Eq)
              
 instance FromJSON Followers where
   parseJSON (Object v) = Followers <$> v .: "users"
@@ -62,6 +63,7 @@ data User = User
             { userName :: String
             , userURL :: String
             , userUpdated :: Int }
+            deriving (Show, Eq)
             
 instance FromJSON User where
   parseJSON (Object v) = User <$> 
@@ -71,7 +73,7 @@ instance FromJSON User where
   parseJSON _ = empty
   
   
-data Posts = Posts { postsBlog :: BlogInfo, posts :: [Post] }
+data Posts = Posts { postsBlog :: BlogInfo, posts :: [Post] } deriving (Show, Eq)
 
 instance FromJSON Posts where
   parseJSON (Object v) = Posts <$> 
@@ -80,7 +82,7 @@ instance FromJSON Posts where
   parseJSON _ = empty
 
 
-data PostState = Published | Queued | Draft | Private
+data PostState = Published | Queued | Draft | Private deriving (Show, Eq)
 
 instance FromJSON PostState where
   parseJSON (String "published") = pure Published
@@ -90,7 +92,7 @@ instance FromJSON PostState where
   parseJSON _ = empty
 
 
-data PostFormat = Html | Markdown
+data PostFormat = Html | Markdown deriving (Show, Eq)
 
 instance FromJSON PostFormat where
   parseJSON (String "html") = pure Html
@@ -98,9 +100,9 @@ instance FromJSON PostFormat where
   parseJSON _ = empty
   
   
-data Photo = Photo { photoWidth :: Int, photoHeight :: Int, photoURL :: String }
-data Dialogue = Dialogue { dialogueSpeaker :: String, dialogueSpeakerLabel :: String, dialoguePhrase :: String }
-data VideoPlayer = VideoPlayer { videoPlayerWidth :: Int, videoPlayerEmbedCode :: String }
+data Photo = Photo { photoWidth :: Int, photoHeight :: Int, photoURL :: String } deriving (Show, Eq)
+data Dialogue = Dialogue { dialogueSpeaker :: String, dialogueSpeakerLabel :: String, dialoguePhrase :: String } deriving (Show, Eq)
+data VideoPlayer = VideoPlayer { videoPlayerWidth :: Int, videoPlayerEmbedCode :: String } deriving (Show, Eq)
 data PostData = TextPost { textTitle :: String, textBody :: String }
               | PhotoPost { photoPostPhotos :: [Photo], photoPostCaption :: String }
               | QuotePost { quoteText :: String, quoteSource :: String }
@@ -111,6 +113,7 @@ data PostData = TextPost { textTitle :: String, textBody :: String }
                             audioTrackNumber :: Int, audioYear :: Int }
               | VideoPost { videoCaption :: String, videoPlayer :: [VideoPlayer] }
               | AnswerPost { askingName :: String, askingURL :: String, answerQuestion :: String, answerAnswer :: String }
+              deriving (Show, Eq)
                 
 instance FromJSON Photo where
   parseJSON (Object v) = Photo <$> 
@@ -152,7 +155,7 @@ data Post = Post
             , postSourceTitle :: Maybe String
             , postLiked :: Bool
             , postTypeSpecificData :: PostData
-            }
+            } deriving (Show, Eq)
               
 instance FromJSON Post where
   parseJSON (Object v) = Post <$> 
