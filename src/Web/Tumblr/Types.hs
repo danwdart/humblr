@@ -20,7 +20,8 @@ data BlogInfo = BlogInfo
                 , blogInfoLikes :: Int } deriving (Show, Eq)
                 
 instance FromJSON BlogInfo where
-  parseJSON (Object v) = BlogInfo <$>
+  parseJSON (Object w) = (w .: "blog") >>= \v ->
+                         BlogInfo <$>
                          v .: "title" <*>
                          v .: "posts" <*>
                          v .: "name" <*> 

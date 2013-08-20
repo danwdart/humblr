@@ -65,6 +65,7 @@ library
                     , http-types ==0.7.*
                     , authenticate-oauth ==1.4.*
                     , time >= 1.4
+                    , unordered-containers >= 0.2
   
   -- Directories containing source files.
   hs-source-dirs:      src

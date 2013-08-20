@@ -22,6 +22,7 @@ import Network.HTTP.Types
 import Web.Authenticate.OAuth
 
 import Web.Tumblr.Types
+import qualified Data.HashMap.Strict as HM
 
 newtype AvatarSize = AvatarSize {getAvatarSize :: Int}
 
@@ -54,7 +55,11 @@ type BaseHostname = ByteString
 jsonValue :: (FromJSON a) => Parser a
 jsonValue = json >>= \v -> case fromJSON v of
   Error s -> fail s
-  Success x -> return x
+  Success x -> case HM.lookup "response" x of
+    Nothing -> fail "Invalid response data"
+    Just w  ->  case fromJSON w of
+      Error s -> fail s
+      Success x -> return x
 
 tumblrInfo :: (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader k m) => 
              BaseHostname -> Manager -> m BlogInfo
