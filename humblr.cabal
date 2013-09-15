@@ -70,3 +70,12 @@ library
   
   -- Directories containing source files.
   hs-source-dirs:      src
+  
+executable Humblr-test
+  main-is:             Main.hs
+  build-depends:       base ==4.6.*
+                    , mtl ==2.1.*
+                    , resourcet
+                    , http-conduit >=1.9
+                    , bytestring ==0.10.*
+                    , humblr
