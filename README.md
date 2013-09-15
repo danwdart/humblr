@@ -7,6 +7,8 @@ Usage
 -----
 
 ```haskell
+{-# LANGUAGE OverloadedStrings #-}
+
 import qualified Network.HTTP.Conduit as NetConduit
 import qualified Web.Tumblr as Tumblr
 import qualified Web.Tumblr.Types as Tumblr.Types
