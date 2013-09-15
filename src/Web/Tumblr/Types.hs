@@ -4,7 +4,11 @@ module Web.Tumblr.Types where
 
 import Data.Aeson
 import Control.Applicative ((<$>), (<*>), empty, pure)
-import Data.Time.Clock(UTCTime)
+
+import Data.Time(UTCTime,ZonedTime)
+import Data.Time.Format(parseTime)
+import Data.Time.LocalTime(zonedTimeToUTC)
+import System.Locale(defaultTimeLocale)
 
 -- for reference, visit http://www.tumblr.com/docs/en/api/v2
 
@@ -25,7 +29,7 @@ instance FromJSON BlogInfo where
                          v .: "title" <*>
                          v .: "posts" <*>
                          v .: "name" <*> 
-                         (v .: "url") <*>
+                         v .: "url" <*>
                          v .: "updated" <*>
                          v .: "description" <*>
                          v .: "ask" <*>
@@ -77,8 +81,8 @@ instance FromJSON User where
 data Posts = Posts { postsBlog :: BlogInfo, posts :: [Post] } deriving (Show, Eq)
 
 instance FromJSON Posts where
-  parseJSON (Object v) = Posts <$> 
-                         v .: "blog" <*>
+  parseJSON o@(Object v) = Posts <$> 
+                         parseJSON o <*>
                          v .: "posts"
   parseJSON _ = empty
 
@@ -100,8 +104,11 @@ instance FromJSON PostFormat where
   parseJSON (String "markdown") = pure Markdown
   parseJSON _ = empty
   
-  
-data Photo = Photo { photoWidth :: Int, photoHeight :: Int, photoURL :: String } deriving (Show, Eq)
+data Size = Size { sizeWidth :: Int, sizeHeight :: Int } deriving (Show, Eq)
+data Photo = Photo { originalSize :: Size
+                   -- , alt_sizes :: [Size] -- TODO
+                   , photoURL :: Maybe String  -- FIXME: should be String
+                   } deriving (Show, Eq)
 data Dialogue = Dialogue { dialogueSpeaker :: String, dialogueSpeakerLabel :: String, dialoguePhrase :: String } deriving (Show, Eq)
 data VideoPlayer = VideoPlayer { videoPlayerWidth :: Int, videoPlayerEmbedCode :: String } deriving (Show, Eq)
 data PostData = TextPost { textTitle :: String, textBody :: String }
@@ -111,15 +118,21 @@ data PostData = TextPost { textTitle :: String, textBody :: String }
               | ChatPost { chatTitle :: Maybe String, chatBody :: String, chatDialogue :: [Dialogue] }
               | AudioPost { audioCaption :: String, audioPlayer :: String, audioPlays :: Int, audioAlbumArt :: String, 
                             audioArtist :: String, audioAlbum :: String, audioTrackName :: String, 
-                            audioTrackNumber :: Int, audioYear :: Int }
+                            audioTrackNumber :: Maybe Int, audioYear :: Maybe Int }
               | VideoPost { videoCaption :: String, videoPlayer :: [VideoPlayer] }
               | AnswerPost { askingName :: String, askingURL :: String, answerQuestion :: String, answerAnswer :: String }
               deriving (Show, Eq)
                 
+instance FromJSON Size where
+  parseJSON (Object v) = Size <$> 
+                         v .: "width" <*>
+                         v .: "height"
+  parseJSON _ = empty
+  
 instance FromJSON Photo where
   parseJSON (Object v) = Photo <$> 
-                         v .: "width" <*>
-                         v .: "height" <*>
+                         v .: "original_size" <*>
+                         -- v .: "alt_sizes" <*> -- TODO
                          v .: "url"
   parseJSON _ = empty
   
@@ -163,7 +176,7 @@ instance FromJSON Post where
                          v .: "blog_name" <*>
                          v .: "id" <*>
                          v .: "post_url" <*>
-                         v .: "date" <*>
+                         ((v .: "date") >>= parseTumblrTime) <*>
                          v .: "timestamp" <*>
                          v .: "state" <*>
                          v .: "format" <*>
@@ -213,5 +226,9 @@ instance FromJSON Post where
                                                               v .: "question" <*>
                                                               v .: "answer"
                              parseJSONTypeSpecific _ = fail "Invalid post type."
+                             
+                             parseTumblrTime t = case parseTime defaultTimeLocale "%F %X %Z" t of
+                               Just t' -> pure (zonedTimeToUTC t')
+                               Nothing -> fail "Could not parse date"
                              
   parseJSON _ = empty
