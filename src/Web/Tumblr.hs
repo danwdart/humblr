@@ -79,8 +79,11 @@ tumblrAvatar :: (MonadBaseControl IO m, MonadResource m)
                -> Maybe AvatarSize -- ^ The size of the avatar (square, one value for both length and width). Must be one of the values: 16, 24, 30, 40, 48, 64, 96, 128, 512
                -> Manager -> m LB.ByteString
 tumblrAvatar baseHostname msize manager = do
-  let myRequest = tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> B.pack "/avatar" <> maybe B.empty (B.pack . show . getAvatarSize) msize,
-                                     checkStatus = \stat -> if stat == movedPermanently301 then const (const Nothing) else checkStatus def stat
+  let myRequest = tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> B.pack "/avatar" <> 
+                                            maybe B.empty (B.pack . show . getAvatarSize) msize,
+                                     checkStatus = \stat -> if stat == movedPermanently301 
+                                                           then const (const Nothing) 
+                                                           else checkStatus def stat
                                     } 
   resp <- responseBody <$> http myRequest manager
   resp $$+- CB.sinkLbs
@@ -95,7 +98,10 @@ tumblrLikes :: (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader
               -> Manager -> m Likes
 tumblrLikes baseHostname mlimit moffset manager = do
   apiKey <- getAPIKey <$> ask
-  let myRequest = tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> B.pack "/likes?api_key=" <> apiKey <> maybe B.empty ((B.pack "&limit=" <>) . B.pack . show) mlimit <> maybe B.empty ((B.pack "&offset=" <>) . B.pack . show) moffset}
+  let myRequest = tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> 
+                                            B.pack "/likes?api_key=" <> apiKey <> 
+                                            maybe B.empty ((B.pack "&limit=" <>) . B.pack . show) mlimit <> 
+                                            maybe B.empty ((B.pack "&offset=" <>) . B.pack . show) moffset }
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
   
@@ -104,7 +110,11 @@ tumblrFollowers :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m)
                   BaseHostname -> Maybe Int -> Maybe Int -> Credential -> Manager -> m Followers
 tumblrFollowers baseHostname mlimit moffset credential manager = do
   oauth <- ask
-  myRequest <- signOAuth oauth credential $ tumblrBaseRequest {path = B.pack "/v2/blog" <> baseHostname <> B.pack "/followers" <> renderQueryCull True [(B.pack "limit", B.pack . show <$> mlimit), (B.pack "offset", B.pack . show <$> moffset)]}
+  myRequest <- signOAuth oauth credential $ 
+              tumblrBaseRequest {path = B.pack "/v2/blog" <> baseHostname <> 
+                                        B.pack "/followers" <> 
+                                        renderQueryCull True [(B.pack "limit", B.pack . show <$> mlimit), 
+                                                              (B.pack "offset", B.pack . show <$> moffset)]}
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
   
@@ -148,7 +158,9 @@ tumblrDraftPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m
                    BaseHostname -> Maybe PostFilter -> Credential -> Manager -> m Posts
 tumblrDraftPosts baseHostname mfilter credential manager = do
   oauth <- ask
-  myRequest <- signOAuth oauth credential $ tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> B.pack "/posts/draft" <> maybe B.empty (B.append (B.pack "?filter=") . reduceFirst . B.pack . show) mfilter}
+  myRequest <- signOAuth oauth credential $ tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> 
+                                                                     B.pack "/posts/draft" <> 
+                                                                     maybe B.empty (B.append (B.pack "?filter=") . reduceFirst . B.pack . show) mfilter}
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
   
