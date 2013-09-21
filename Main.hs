@@ -5,11 +5,8 @@ import qualified Web.Tumblr as Tumblr
 import qualified Web.Tumblr.Types as Tumblr.Types
 import Control.Monad.Trans.Resource
 import Control.Monad.Reader
-import Data.ByteString(ByteString)
 import qualified Data.ByteString.Lazy as LB
-
-apiKey :: ByteString
-apiKey = "bz5NED3ASSK1XBHjnfb0WSigo5Y2jxYvhm09u4OQn21isU4twQ"
+import ApiKey
 
 getTumblrInfo mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrInfo hostname mgr) apiKey
 

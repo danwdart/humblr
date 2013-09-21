@@ -54,7 +54,7 @@ library
   -- other-modules:       
   
   -- Other library packages from which modules are imported.
-  build-depends:       base ==4.6.*
+  build-depends:       base >=4.5
                     , mtl ==2.1.*
                     , aeson ==0.6.*
                     , attoparsec ==0.10.*
@@ -73,7 +73,7 @@ library
   
 executable Humblr-test
   main-is:             Main.hs
-  build-depends:       base ==4.6.*
+  build-depends:       base >=4.5
                     , mtl ==2.1.*
                     , resourcet
                     , http-conduit >=1.9
