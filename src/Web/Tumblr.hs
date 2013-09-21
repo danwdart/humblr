@@ -88,7 +88,6 @@ tumblrAvatar baseHostname msize manager = do
   resp <- responseBody <$> http myRequest manager
   resp $$+- CB.sinkLbs
 
--- FIXME: still buggy
 -- | Retrieve Blog's Likes
 -- This method can be used to retrieve the publicly exposed likes from a blog.
 tumblrLikes :: (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader k m) 

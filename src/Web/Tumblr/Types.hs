@@ -104,10 +104,9 @@ instance FromJSON PostFormat where
   parseJSON (String "markdown") = pure Markdown
   parseJSON _ = empty
   
-data Size = Size { sizeWidth :: Int, sizeHeight :: Int } deriving (Show, Eq)
-data Photo = Photo { originalSize :: Size
-                   -- , alt_sizes :: [Size] -- TODO
-                   , photoURL :: Maybe String  -- FIXME: should be String
+data PhotoInfo = PhotoInfo { sizeWidth :: Int, sizeHeight :: Int, photoURL :: String } deriving (Show, Eq)
+data Photo = Photo { originalSize :: PhotoInfo
+                   -- , alt_sizes :: [PhotoInfo] -- TODO
                    } deriving (Show, Eq)
 data Dialogue = Dialogue { dialogueSpeaker :: String, dialogueSpeakerLabel :: String, dialoguePhrase :: String } deriving (Show, Eq)
 data VideoPlayer = VideoPlayer { videoPlayerWidth :: Int, videoPlayerEmbedCode :: String } deriving (Show, Eq)
@@ -116,24 +115,24 @@ data PostData = TextPost { textTitle :: String, textBody :: String }
               | QuotePost { quoteText :: String, quoteSource :: String }
               | LinkPost { linkTitle :: String, linkURL :: String, linkDescription :: String }
               | ChatPost { chatTitle :: Maybe String, chatBody :: String, chatDialogue :: [Dialogue] }
-              | AudioPost { audioCaption :: String, audioPlayer :: String, audioPlays :: Int, audioAlbumArt :: String, 
-                            audioArtist :: String, audioAlbum :: String, audioTrackName :: String, 
+              | AudioPost { audioCaption :: String, audioPlayer :: String, audioPlays :: Int, 
+                            audioAlbumArt :: Maybe String, audioArtist :: Maybe String, audioAlbum :: Maybe String, audioTrackName :: Maybe String, 
                             audioTrackNumber :: Maybe Int, audioYear :: Maybe Int }
               | VideoPost { videoCaption :: String, videoPlayer :: [VideoPlayer] }
               | AnswerPost { askingName :: String, askingURL :: String, answerQuestion :: String, answerAnswer :: String }
               deriving (Show, Eq)
                 
-instance FromJSON Size where
-  parseJSON (Object v) = Size <$> 
+instance FromJSON PhotoInfo where
+  parseJSON (Object v) = PhotoInfo <$> 
                          v .: "width" <*>
-                         v .: "height"
+                         v .: "height" <*>
+                         v .: "url"
   parseJSON _ = empty
   
 instance FromJSON Photo where
   parseJSON (Object v) = Photo <$> 
-                         v .: "original_size" <*>
-                         -- v .: "alt_sizes" <*> -- TODO
-                         v .: "url"
+                         v .: "original_size" -- <*>
+                         -- v .: "alt_sizes" -- TODO
   parseJSON _ = empty
   
 instance FromJSON Dialogue where
@@ -211,12 +210,12 @@ instance FromJSON Post where
                                                              v .: "caption" <*>
                                                              v .: "player" <*>
                                                              v .: "plays" <*>
-                                                             v .: "album_art" <*>
-                                                             v .: "artist" <*>
-                                                             v .: "album" <*>
-                                                             v .: "track_name" <*>
-                                                             v .: "track_number" <*>
-                                                             v .: "year"
+                                                             v .:? "album_art" <*>
+                                                             v .:? "artist" <*>
+                                                             v .:? "album" <*>
+                                                             v .:? "track_name" <*>
+                                                             v .:? "track_number" <*>
+                                                             v .:? "year"
                              parseJSONTypeSpecific "video" = VideoPost <$>
                                                              v .: "caption" <*>
                                                              v .: "player"
