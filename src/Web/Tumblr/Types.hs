@@ -87,10 +87,10 @@ instance FromJSON Posts where
   parseJSON _ = empty
   
   
-data Queue = Queue { queuePosts :: [Post] } deriving (Show, Eq)
+data JustPosts = JustPosts { justPosts :: [Post] } deriving (Show, Eq)
 
-instance FromJSON Queue where
-  parseJSON o@(Object v) = Queue <$> 
+instance FromJSON JustPosts where
+  parseJSON o@(Object v) = JustPosts <$> 
                            v .: "posts"
   parseJSON _ = empty
 

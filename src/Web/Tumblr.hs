@@ -193,8 +193,8 @@ tumblrQueuedPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth 
                     -> Maybe Int -- ^ The number of results to return: 1–20, inclusive. Default: 20
                     -> Maybe Int -- ^ Post number to start at. Default: 0
                     -> Maybe PostFilter -- ^ Specifies the post format to return, other than HTML.
-                    -> Credential  -- ^ OAuth authentication credentials
-                    -> Manager -> m Queue
+                    -> Credential -- ^ OAuth authentication credentials
+                    -> Manager -> m JustPosts
 tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
   oauth <- ask
   myRequest <- signOAuth oauth credential $ tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> B.pack "/posts/queue" <> renderQueryCull True [
@@ -204,9 +204,12 @@ tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
   
--- TODO: test, document
-tumblrDraftPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) => 
-                   BaseHostname -> Maybe PostFilter -> Credential -> Manager -> m Posts
+-- | Retrieve Draft Posts
+tumblrDraftPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) 
+                   => BaseHostname 
+                   -> Maybe PostFilter -- ^ Specifies the post format to return, other than HTML.
+                   -> Credential -- ^ OAuth authentication credentials
+                   -> Manager -> m JustPosts
 tumblrDraftPosts baseHostname mfilter credential manager = do
   oauth <- ask
   myRequest <- signOAuth oauth credential $ tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> 
@@ -215,9 +218,13 @@ tumblrDraftPosts baseHostname mfilter credential manager = do
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
   
--- TODO: test, document
-tumblrSubmissionPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) => 
-                        BaseHostname -> Maybe Int -> Maybe PostFilter -> Credential -> Manager -> m Posts
+-- | Retrieve Submission Posts
+tumblrSubmissionPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) 
+                        => BaseHostname 
+                        -> Maybe Int -- ^ Post number to start at. Default: 0
+                        -> Maybe PostFilter -- ^ Specifies the post format to return, other than HTML.
+                        -> Credential -- ^ OAuth authentication credentials
+                        -> Manager -> m JustPosts
 tumblrSubmissionPosts baseHostname moffset mfilter credential manager = do
   oauth <- ask
   myRequest <- signOAuth oauth credential $ tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> B.pack "/posts/submission" <> renderQueryCull True [

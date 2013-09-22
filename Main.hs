@@ -29,15 +29,22 @@ getTumblrQueuedPosts mgr hostname = runResourceT $ do
    credential <- Tumblr.tumblrAuthorize oauth mgr
    runReaderT (Tumblr.tumblrQueuedPosts hostname Nothing Nothing Nothing credential mgr) oauth
 
+getTumblrDraftPosts mgr hostname = runResourceT $ do 
+   credential <- Tumblr.tumblrAuthorize oauth mgr
+   runReaderT (Tumblr.tumblrDraftPosts hostname Nothing credential mgr) oauth
+   
+getTumblrSubmissionPosts mgr hostname = runResourceT $ do 
+   credential <- Tumblr.tumblrAuthorize oauth mgr
+   runReaderT (Tumblr.tumblrSubmissionPosts hostname Nothing Nothing credential mgr) oauth
 
 main = do  
   mgr <- NetConduit.newManager NetConduit.def
   let hostname = "144c.tumblr.com"
-  -- val <- getTumblrInfo mgr hostname
+  val <- getTumblrInfo mgr hostname
   -- val <- getTumblrAvatar mgr hostname -- returns a ByteString
   -- val <- getTumblrLikes mgr hostname
   -- val <- getTumblrPosts mgr hostname
   -- val <- getTumblrFollowers mgr hostname -- doesnt work
-  val <- getTumblrQueuedPosts mgr hostname
+  -- val <- getTumblrSubmissionPosts mgr hostname
   NetConduit.closeManager mgr
   print val
