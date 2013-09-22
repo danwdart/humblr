@@ -6,18 +6,33 @@ import qualified Web.Tumblr.Types as Tumblr.Types
 import Control.Monad.Trans.Resource
 import Control.Monad.Reader
 import qualified Data.ByteString.Lazy as LB
-import ApiKey
 
-getTumblrInfo mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrInfo hostname mgr) apiKey
+
+oauth = Tumblr.tumblrOAuth 
+        "[OAuth Consumer Key]"
+        "[Secret Key]"
+
+getTumblrInfo mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrInfo hostname mgr) oauth
 
 getTumblrAvatar mgr hostname = runResourceT $ Tumblr.tumblrAvatar hostname Nothing mgr
 
-getTumblrLikes mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrLikes hostname Nothing Nothing mgr) apiKey
+getTumblrLikes mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrLikes hostname Nothing Nothing mgr) oauth
 
-getTumblrPosts mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrPosts hostname Nothing Nothing Nothing Nothing Nothing Nothing Nothing Nothing mgr) apiKey
+getTumblrPosts mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrPosts hostname Nothing Nothing Nothing Nothing Nothing Nothing Nothing Nothing mgr) oauth
+
+-- doesn't work. problems with authentication?
+-- getTumblrFollowers mgr hostname = runResourceT $ do 
+--   credential <- Tumblr.tumblrAuthorize oauth mgr
+--   runReaderT (Tumblr.tumblrFollowers hostname Nothing Nothing credential mgr) oauth
+
 
 main = do  
   mgr <- NetConduit.newManager NetConduit.def
-  val <- getTumblrLikes mgr "144c.tumblr.com"
+  let hostname = "144c.tumblr.com"
+  -- val <- getTumblrInfo mgr hostname
+  -- val <- getTumblrAvatar mgr hostname -- returns a ByteString
+  -- val <- getTumblrLikes mgr hostname
+  -- val <- getTumblrPosts mgr hostname
+  -- val <- getTumblrFollowers mgr "144c.tumblr.com"
   NetConduit.closeManager mgr
   print val

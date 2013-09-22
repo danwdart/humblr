@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts, DoAndIfThenElse #-}
 
 module Web.Tumblr where
 
@@ -21,9 +21,11 @@ import Data.Monoid
 import Network.HTTP.Conduit
 import Network.HTTP.Types
 
+import Web.Authenticate.OAuth(Credential)
 import Web.Authenticate.OAuth
 
 import Web.Tumblr.Types
+import Web.Tumblr.Helpers
 import qualified Data.HashMap.Strict as HM
 
 newtype AvatarSize = AvatarSize {getAvatarSize :: Int}
@@ -40,6 +42,42 @@ instance HasAPIKey ByteString where
   
 instance HasAPIKey OAuth where
   getAPIKey = oauthConsumerKey
+
+ 
+tumblrOAuth :: ByteString -- ^ The Tumblr API key
+            -> ByteString -- ^ The Tumblr API secret to use
+            -> OAuth
+tumblrOAuth key secret = newOAuth { oauthServerName = "tumblr"
+                                  , oauthRequestUri = "http://www.tumblr.com/oauth/request_token"
+                                  , oauthAccessTokenUri = "http://www.tumblr.com/oauth/access_token"
+                                  , oauthAuthorizeUri = "http://www.tumblr.com/oauth/authorize"
+                                  , oauthConsumerKey = key
+                                  , oauthConsumerSecret = secret }                      
+                         
+-- FIXME: this one is more or less just a sample and will not very well in webapps
+-- | Obtain authorization information.
+--   The user is sent to Tumblr to authorize your app and then has to paste the verifier.
+--   TODO: Cleaner, more elegant solution
+--   TODO: Store the obtained tokens
+tumblrAuthorize :: (MonadBaseControl IO m, MonadResource m) 
+                  => OAuth 
+                  -> Manager 
+                  -> m Credential
+tumblrAuthorize oauth mgr = do
+  tempCred <- getTemporaryCredential oauth mgr
+  let authURL = authorizeUrl oauth tempCred
+  verifier <- liftIO $ do 
+    exit <- openBrowserOn authURL
+    if exit /= ExitSuccess then
+      putStrLn ("Failed to open browser! Go to " ++ authURL)
+    else 
+      return ()
+    putStrLn "Enter the verifier (oauth_verifier field in the URL): "
+    getLine
+  
+  let tempCred' = injectVerifier (B.pack verifier) tempCred
+  cred <- getAccessToken oauth tempCred' mgr
+  return cred
 
 tumblrBaseRequest :: Request m
 tumblrBaseRequest = def {
@@ -104,9 +142,14 @@ tumblrLikes baseHostname mlimit moffset manager = do
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
   
--- TODO: test
-tumblrFollowers :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) => 
-                  BaseHostname -> Maybe Int -> Maybe Int -> Credential -> Manager -> m Followers
+{-
+-- | Retrieve a Blog's Followers
+tumblrFollowers :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) 
+                  => BaseHostname 
+                  -> Maybe Int -- ^ The number of results to return: 1–20, inclusive. Default: 20
+                  -> Maybe Int -- ^ Result to start at. Default: 0 (first follower)
+                  -> Credential 
+                  -> Manager -> m Followers
 tumblrFollowers baseHostname mlimit moffset credential manager = do
   oauth <- ask
   myRequest <- signOAuth oauth credential $ 
@@ -116,7 +159,9 @@ tumblrFollowers baseHostname mlimit moffset credential manager = do
                                                               (B.pack "offset", B.pack . show <$> moffset)]}
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
+-}
   
+-- TODO: test, document
 tumblrPosts :: (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader k m) 
               => BaseHostname 
               -> Maybe PostType -- ^ The type of post to return.
@@ -142,6 +187,7 @@ tumblrPosts baseHostname mtype mid mtag mlimit moffset mrebloginfo mnotesinfo mf
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
 
+-- TODO: test, document
 tumblrQueuedPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) => 
                     BaseHostname -> Maybe Int -> Maybe Int -> Maybe PostFilter -> Credential -> Manager -> m Posts
 tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
@@ -153,6 +199,7 @@ tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
   
+-- TODO: test, document
 tumblrDraftPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) => 
                    BaseHostname -> Maybe PostFilter -> Credential -> Manager -> m Posts
 tumblrDraftPosts baseHostname mfilter credential manager = do
@@ -163,6 +210,7 @@ tumblrDraftPosts baseHostname mfilter credential manager = do
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
   
+-- TODO: test, document
 tumblrSubmissionPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) => 
                         BaseHostname -> Maybe Int -> Maybe PostFilter -> Credential -> Manager -> m Posts
 tumblrSubmissionPosts baseHostname moffset mfilter credential manager = do
