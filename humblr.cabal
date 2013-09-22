@@ -10,7 +10,7 @@ name:                humblr
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.1.0.0
+version:             0.2.0.0
 
 -- A short (one-line) description of the package.
 synopsis:            Haskell wrapper for the Tumblr API
@@ -48,13 +48,36 @@ cabal-version:       >=1.8
 library
   -- Modules exported by the library.
   exposed-modules:     Web.Tumblr
+                     , Web.Tumblr.Types
   
   -- Modules included in this library but not exported.
-  -- other-modules:       
+  other-modules:       Web.Tumblr.Helpers
   
   -- Other library packages from which modules are imported.
-  build-depends:       base ==4.6.*,  mtl ==2.1.*, aeson ==0.6.*, attoparsec ==0.10.*, bytestring ==0.10.*, conduit ==0.5.*, attoparsec-conduit ==0.5.*, http-conduit ==1.8.*, http-types ==0.7.*, authenticate-oauth ==1.4.*
+  build-depends:       base >=4.5
+                     , mtl >=2.0
+                     , aeson ==0.6.*
+                     , attoparsec ==0.10.*
+                     , bytestring >=0.9
+                     , conduit >= 1.0.5
+                     , attoparsec-conduit >= 1.0.0
+                     , http-conduit >=1.9
+                     , http-types >= 0.7
+                     , authenticate-oauth ==1.4.*
+                     , time >= 1.4
+                     , old-locale >= 1.0
+                     , unordered-containers >= 0.2
+                     , process
   
   -- Directories containing source files.
   hs-source-dirs:      src
   
+executable Humblr-test
+  main-is:             Main.hs
+  build-depends:       base >=4.5
+                     , mtl >=2.0
+                     , resourcet
+                     , http-conduit >=1.9
+                     , bytestring >=0.9
+                     , authenticate-oauth ==1.4.*                    
+                     , humblr
