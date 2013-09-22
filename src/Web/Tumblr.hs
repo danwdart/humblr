@@ -142,7 +142,7 @@ tumblrLikes baseHostname mlimit moffset manager = do
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
   
-{-
+
 -- | Retrieve a Blog's Followers
 tumblrFollowers :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) 
                   => BaseHostname 
@@ -153,13 +153,12 @@ tumblrFollowers :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m)
 tumblrFollowers baseHostname mlimit moffset credential manager = do
   oauth <- ask
   myRequest <- signOAuth oauth credential $ 
-              tumblrBaseRequest {path = B.pack "/v2/blog" <> baseHostname <> 
+              tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> 
                                         B.pack "/followers" <> 
                                         renderQueryCull True [(B.pack "limit", B.pack . show <$> mlimit), 
                                                               (B.pack "offset", B.pack . show <$> moffset)]}
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
--}
   
 -- | Retrieve Published Posts
 tumblrPosts :: (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader k m) 

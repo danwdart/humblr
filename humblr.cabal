@@ -55,19 +55,19 @@ library
   
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.5
-                    , mtl ==2.1.*
-                    , aeson ==0.6.*
-                    , attoparsec ==0.10.*
-                    , bytestring >=0.9
-                    , conduit >= 1.0.5
-                    , attoparsec-conduit >= 1.0.0
-                    , http-conduit >=1.9
-                    , http-types >= 0.7
-                    , authenticate-oauth ==1.4.*
-                    , time >= 1.4
-                    , old-locale >= 1.0
-                    , unordered-containers >= 0.2
-                    , process
+                     , mtl >=2.0
+                     , aeson ==0.6.*
+                     , attoparsec ==0.10.*
+                     , bytestring >=0.9
+                     , conduit >= 1.0.5
+                     , attoparsec-conduit >= 1.0.0
+                     , http-conduit >=1.9
+                     , http-types >= 0.7
+                     , authenticate-oauth ==1.4.*
+                     , time >= 1.4
+                     , old-locale >= 1.0
+                     , unordered-containers >= 0.2
+                     , process
   
   -- Directories containing source files.
   hs-source-dirs:      src
@@ -75,9 +75,9 @@ library
 executable Humblr-test
   main-is:             Main.hs
   build-depends:       base >=4.5
-                    , mtl ==2.1.*
-                    , resourcet
-                    , http-conduit >=1.9
-                    , bytestring >=0.9
-                    , authenticate-oauth ==1.4.*                    
-                    , humblr
+                     , mtl >=2.0
+                     , resourcet
+                     , http-conduit >=1.9
+                     , bytestring >=0.9
+                     , authenticate-oauth ==1.4.*                    
+                     , humblr

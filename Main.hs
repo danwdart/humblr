@@ -20,10 +20,9 @@ getTumblrLikes mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrLikes host
 
 getTumblrPosts mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrPosts hostname Nothing Nothing Nothing Nothing Nothing Nothing Nothing Nothing mgr) oauth
 
--- doesn't work. problems with authentication?
--- getTumblrFollowers mgr hostname = runResourceT $ do 
---   credential <- Tumblr.tumblrAuthorize oauth mgr
---   runReaderT (Tumblr.tumblrFollowers hostname Nothing Nothing credential mgr) oauth
+getTumblrFollowers mgr hostname = runResourceT $ do 
+   credential <- Tumblr.tumblrAuthorize oauth mgr
+   runReaderT (Tumblr.tumblrFollowers hostname Nothing Nothing credential mgr) oauth
 
 getTumblrQueuedPosts mgr hostname = runResourceT $ do 
    credential <- Tumblr.tumblrAuthorize oauth mgr
@@ -44,7 +43,7 @@ main = do
   -- val <- getTumblrAvatar mgr hostname -- returns a ByteString
   -- val <- getTumblrLikes mgr hostname
   -- val <- getTumblrPosts mgr hostname
-  -- val <- getTumblrFollowers mgr hostname -- doesnt work
+  -- val <- getTumblrFollowers mgr hostname
   -- val <- getTumblrSubmissionPosts mgr hostname
   NetConduit.closeManager mgr
   print val
