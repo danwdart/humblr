@@ -148,7 +148,7 @@ tumblrFollowers :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m)
                   => BaseHostname 
                   -> Maybe Int -- ^ The number of results to return: 1–20, inclusive. Default: 20
                   -> Maybe Int -- ^ Result to start at. Default: 0 (first follower)
-                  -> Credential 
+                  -> Credential -- ^ OAuth authentication credentials
                   -> Manager -> m Followers
 tumblrFollowers baseHostname mlimit moffset credential manager = do
   oauth <- ask
@@ -161,7 +161,7 @@ tumblrFollowers baseHostname mlimit moffset credential manager = do
   resp $$+- sinkParser jsonValue
 -}
   
--- TODO: test, document
+-- | Retrieve Published Posts
 tumblrPosts :: (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader k m) 
               => BaseHostname 
               -> Maybe PostType -- ^ The type of post to return.
@@ -187,9 +187,14 @@ tumblrPosts baseHostname mtype mid mtag mlimit moffset mrebloginfo mnotesinfo mf
   resp <- responseBody <$> http myRequest manager
   resp $$+- sinkParser jsonValue
 
--- TODO: test, document
-tumblrQueuedPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) => 
-                    BaseHostname -> Maybe Int -> Maybe Int -> Maybe PostFilter -> Credential -> Manager -> m Posts
+-- | Retrieve Queued Posts
+tumblrQueuedPosts :: (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m) 
+                    => BaseHostname 
+                    -> Maybe Int -- ^ The number of results to return: 1–20, inclusive. Default: 20
+                    -> Maybe Int -- ^ Post number to start at. Default: 0
+                    -> Maybe PostFilter -- ^ Specifies the post format to return, other than HTML.
+                    -> Credential  -- ^ OAuth authentication credentials
+                    -> Manager -> m Queue
 tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
   oauth <- ask
   myRequest <- signOAuth oauth credential $ tumblrBaseRequest {path = B.pack "/v2/blog/" <> baseHostname <> B.pack "/posts/queue" <> renderQueryCull True [

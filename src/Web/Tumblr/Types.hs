@@ -82,8 +82,16 @@ data Posts = Posts { postsBlog :: BlogInfo, posts :: [Post] } deriving (Show, Eq
 
 instance FromJSON Posts where
   parseJSON o@(Object v) = Posts <$> 
-                         parseJSON o <*>
-                         v .: "posts"
+                           parseJSON o <*>
+                           v .: "posts"
+  parseJSON _ = empty
+  
+  
+data Queue = Queue { queuePosts :: [Post] } deriving (Show, Eq)
+
+instance FromJSON Queue where
+  parseJSON o@(Object v) = Queue <$> 
+                           v .: "posts"
   parseJSON _ = empty
 
 
