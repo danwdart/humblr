@@ -58,7 +58,7 @@ library
                     , mtl ==2.1.*
                     , aeson ==0.6.*
                     , attoparsec ==0.10.*
-                    , bytestring ==0.10.*
+                    , bytestring >=0.9
                     , conduit >= 1.0.5
                     , attoparsec-conduit >= 1.0.0
                     , http-conduit >=1.9
@@ -78,6 +78,6 @@ executable Humblr-test
                     , mtl ==2.1.*
                     , resourcet
                     , http-conduit >=1.9
-                    , bytestring ==0.10.*
+                    , bytestring >=0.9
                     , authenticate-oauth ==1.4.*                    
                     , humblr
