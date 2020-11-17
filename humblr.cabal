@@ -50,9 +50,6 @@ library
   exposed-modules:     Web.Tumblr
                      , Web.Tumblr.Types
   
-  -- Modules included in this library but not exported.
-  other-modules:       Web.Tumblr.Helpers
-  
   -- Other library packages from which modules are imported.
   build-depends:       base >=4.13
                      , mtl >=2.0
