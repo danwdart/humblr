@@ -68,6 +68,7 @@ library
                      , http-types >= 0.7
                      , monad-control 
                      , old-locale >= 1.0
+                     , open-browser
                      , process
                      , time >= 1.4
                      , transformers

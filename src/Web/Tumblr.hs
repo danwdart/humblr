@@ -18,7 +18,7 @@ import Data.Maybe
 import Network.HTTP.Conduit
 import Network.HTTP.Types
 import Web.Authenticate.OAuth
-import Web.Tumblr.Helpers
+import Web.Browser
 import Web.Tumblr.Types
 
 newtype AvatarSize = AvatarSize {getAvatarSize :: Int}
@@ -67,9 +67,8 @@ tumblrAuthorize oauth mgr = do
   tempCred <- getTemporaryCredential oauth mgr
   let authURL = authorizeUrl oauth tempCred
   verifier <- liftIO $ do
-    exit <- openBrowserOn authURL
-    when
-      (exit /= ExitSuccess) $
+    browserSuccess <- openBrowser authURL
+    unless browserSuccess $
         putStrLn ("Failed to open browser! Go to " <> authURL)
     putStrLn "Enter the verifier (oauth_verifier field in the URL): "
     getLine
