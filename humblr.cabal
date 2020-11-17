@@ -54,30 +54,23 @@ library
   other-modules:       Web.Tumblr.Helpers
   
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.5
+  build-depends:       base >=4.13
                      , mtl >=2.0
-                     , aeson ==0.6.*
-                     , attoparsec ==0.10.*
+                     , aeson
+                     , attoparsec
+                     , attoparsec-conduit >= 1.0.0
+                     , authenticate-oauth
                      , bytestring >=0.9
                      , conduit >= 1.0.5
-                     , attoparsec-conduit >= 1.0.0
+                     , conduit-extra
                      , http-conduit >=1.9
                      , http-types >= 0.7
-                     , authenticate-oauth ==1.4.*
-                     , time >= 1.4
+                     , monad-control 
                      , old-locale >= 1.0
-                     , unordered-containers >= 0.2
                      , process
+                     , time >= 1.4
+                     , transformers
+                     , unordered-containers >= 0.2
   
   -- Directories containing source files.
   hs-source-dirs:      src
-  
-executable Humblr-test
-  main-is:             Main.hs
-  build-depends:       base >=4.5
-                     , mtl >=2.0
-                     , resourcet
-                     , http-conduit >=1.9
-                     , bytestring >=0.9
-                     , authenticate-oauth ==1.4.*                    
-                     , humblr

@@ -1,0 +1,5 @@
+resolver: lts-16.20
+packages:
+  - .
+extra-deps:
+  - attoparsec-conduit-1.1.0@sha256:00aeee08f025b5386b994a0d6409ca578b0227a0d8445955847c186c31c63caa,692
