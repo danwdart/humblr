@@ -5,7 +5,6 @@ module Web.Tumblr where
 import Conduit
 import Control.Arrow
 import Control.Monad.Reader
-import Control.Monad.Trans.Control
 import Data.Aeson
 import Data.Attoparsec.ByteString
 import Data.ByteString (ByteString)
@@ -60,7 +59,7 @@ tumblrOAuth key secret =
 --   TODO: Cleaner, more elegant solution
 --   TODO: Store the obtained tokens
 tumblrAuthorize ::
-  (MonadBaseControl IO m, MonadResource m) =>
+  (MonadResource m) =>
   OAuth ->
   Manager ->
   m Credential
@@ -103,7 +102,7 @@ jsonValue =
 
 -- | This method returns general information about the blog, such as the title, number of posts, and other high-level data.
 tumblrInfo ::
-  (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader k m, MonadThrow m) =>
+  (HasAPIKey k, MonadThrow m, MonadResource m, MonadReader k m) =>
   BaseHostname ->
   Manager ->
   m BlogInfo
@@ -116,7 +115,7 @@ tumblrInfo baseHostname manager = do
 -- | Retrieve a Blog Avatar
 -- You can get a blog's avatar in 9 different sizes. The default size is 64x64.
 tumblrAvatar ::
-  (MonadBaseControl IO m, MonadResource m) =>
+  (MonadResource m) =>
   BaseHostname ->
   -- | The size of the avatar (square, one value for both length and width). Must be one of the values: 16, 24, 30, 40, 48, 64, 96, 128, 512
   Maybe AvatarSize ->
@@ -139,7 +138,7 @@ tumblrAvatar baseHostname msize manager = do
 -- | Retrieve Blog's Likes
 -- This method can be used to retrieve the publicly exposed likes from a blog.
 tumblrLikes ::
-  (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader k m, MonadThrow m) =>
+  (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) =>
   BaseHostname ->
   -- | The number of results to return: 1–20, inclusive. Default: 20
   Maybe Int ->
@@ -163,7 +162,7 @@ tumblrLikes baseHostname mlimit moffset manager = do
 
 -- | Retrieve a Blog's Followers
 tumblrFollowers ::
-  (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m, MonadThrow m) =>
+  (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
   BaseHostname ->
   -- | The number of results to return: 1–20, inclusive. Default: 20
   Maybe Int ->
@@ -192,7 +191,7 @@ tumblrFollowers baseHostname mlimit moffset credential manager = do
 
 -- | Retrieve Published Posts
 tumblrPosts ::
-  (HasAPIKey k, MonadBaseControl IO m, MonadResource m, MonadReader k m, MonadThrow m) =>
+  (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) =>
   BaseHostname ->
   -- | The type of post to return.
   Maybe PostType ->
@@ -235,7 +234,7 @@ tumblrPosts baseHostname mtype mid mtag mlimit moffset mrebloginfo mnotesinfo mf
 
 -- | Retrieve Queued Posts
 tumblrQueuedPosts ::
-  (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m, MonadThrow m) =>
+  (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
   BaseHostname ->
   -- | The number of results to return: 1–20, inclusive. Default: 20
   Maybe Int ->
@@ -266,7 +265,7 @@ tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
 
 -- | Retrieve Draft Posts
 tumblrDraftPosts ::
-  (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m, MonadThrow m) =>
+  (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
   BaseHostname ->
   -- | Specifies the post format to return, other than HTML.
   Maybe PostFilter ->
@@ -289,7 +288,7 @@ tumblrDraftPosts baseHostname mfilter credential manager = do
 
 -- | Retrieve Submission Posts
 tumblrSubmissionPosts ::
-  (MonadBaseControl IO m, MonadResource m, MonadReader OAuth m, MonadThrow m) =>
+  (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
   BaseHostname ->
   -- | Post number to start at. Default: 0
   Maybe Int ->
