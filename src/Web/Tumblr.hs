@@ -3,7 +3,6 @@
 module Web.Tumblr where
 
 import Conduit
-import Control.Applicative
 import Control.Arrow
 import Control.Monad.Reader
 import Control.Monad.Trans.Control
@@ -13,12 +12,10 @@ import Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Lazy as LB
 import Data.Char
-import Data.Conduit
 import Data.Conduit.Attoparsec
 import qualified Data.Conduit.Binary as CB
 import qualified Data.HashMap.Strict as HM
 import Data.Maybe
-import Data.Monoid
 import Network.HTTP.Conduit
 import Network.HTTP.Types
 import Web.Authenticate.OAuth

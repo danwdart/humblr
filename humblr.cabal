@@ -28,11 +28,11 @@ license:             BSD3
 license-file:        LICENSE
 
 -- The package author(s).
-author:              Nathan "Taneb" van Doorn
+author:              Nathan "Taneb" van Doorn, Dan Dart
 
 -- An email address to which users can send suggestions, bug reports, and 
 -- patches.
-maintainer:          nvd1234@gmail.com
+maintainer:          cabal@dandart.co.uk
 
 -- A copyright notice.
 -- copyright:           
@@ -74,3 +74,15 @@ library
   
   -- Directories containing source files.
   hs-source-dirs:      src
+
+test-suite humblr-test
+  hs-source-dirs:      src, test
+  type:                exitcode-stdio-1.0
+  default-language:    Haskell2010
+  main-is:             Spec.hs
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  other-modules:
+    Web.TumblrSpec
+  build-depends:
+      base >=4.13
+    , hspec

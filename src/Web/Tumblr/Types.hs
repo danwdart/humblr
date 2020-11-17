@@ -3,9 +3,9 @@
 
 module Web.Tumblr.Types where
 
-import Control.Applicative (empty, pure, (<$>), (<*>))
+import Control.Applicative (empty)
 import Data.Aeson
-import Data.Time (UTCTime, ZonedTime)
+import Data.Time (UTCTime)
 import Data.Time.Format (parseTimeM, defaultTimeLocale)
 import Data.Time.LocalTime (zonedTimeToUTC)
 
