@@ -22,8 +22,7 @@ apiKey = "[the API key you get after registering an app with Tumblr]"
 getTumblrInfo mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrInfo hostname mgr) apiKey
 
 main = do  
-  mgr <- NetConduit.newManager NetConduit.def
+  mgr <- NetConduit.newManager NetConduit.tlsManagerSettings
   val <- getTumblrInfo mgr "someblog.tumblr.com"
-  NetConduit.closeManager mgr
   print val
 ```

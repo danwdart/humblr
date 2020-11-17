@@ -45,9 +45,9 @@ tumblrOAuth ::
 tumblrOAuth key secret =
   newOAuth
     { oauthServerName = "tumblr",
-      oauthRequestUri = "http://www.tumblr.com/oauth/request_token",
-      oauthAccessTokenUri = "http://www.tumblr.com/oauth/access_token",
-      oauthAuthorizeUri = "http://www.tumblr.com/oauth/authorize",
+      oauthRequestUri = "https://www.tumblr.com/oauth/request_token",
+      oauthAccessTokenUri = "https://www.tumblr.com/oauth/access_token",
+      oauthAuthorizeUri = "https://www.tumblr.com/oauth/authorize",
       oauthConsumerKey = key,
       oauthConsumerSecret = secret
     }
