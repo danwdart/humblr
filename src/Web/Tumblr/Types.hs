@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -8,6 +9,8 @@ import Data.Aeson
 import Data.Time (UTCTime)
 import Data.Time.Format (parseTimeM, defaultTimeLocale)
 import Data.Time.LocalTime (zonedTimeToUTC)
+import Data.Aeson.Casing ( aesonPrefix, snakeCase )
+import GHC.Generics ( Generic )
 
 -- for reference, visit http://www.tumblr.com/docs/en/api/v2
 
@@ -50,14 +53,10 @@ data Likes = Likes
   { likedPosts :: [Post],
     likedCount :: Int
   }
-  deriving (Show, Eq)
+  deriving (Show, Generic, Eq)
 
 instance FromJSON Likes where
-  parseJSON (Object v) =
-    Likes
-      <$> v .: "liked_posts"
-      <*> v .: "liked_count"
-  parseJSON _ = empty
+  parseJSON = genericParseJSON $ aesonPrefix snakeCase
 
 newtype Followers = Followers {followers :: [User]}
   deriving (Show, Eq)
@@ -94,18 +93,19 @@ newtype JustPosts = JustPosts {justPosts :: [Post]}
   deriving (Show, Eq)
 
 instance FromJSON JustPosts where
-  parseJSON o@(Object v) =
+  parseJSON (Object v) =
     JustPosts
       <$> v .: "posts"
   parseJSON _ = empty
 
-data PostState = Published | Queued | Draft | Private deriving (Show, Eq)
+data PostState = Published | Queued | Draft | Private | Unapproved deriving (Show, Eq)
 
 instance FromJSON PostState where
   parseJSON (String "published") = pure Published
   parseJSON (String "queued") = pure Queued
   parseJSON (String "draft") = pure Draft
   parseJSON (String "private") = pure Private
+  parseJSON (String "unapproved") = pure Unapproved
   parseJSON _ = empty
 
 data PostFormat = Html | Markdown deriving (Show, Eq)

@@ -100,6 +100,7 @@ jsonValue =
         Success x -> return x
 
 -- | This method returns general information about the blog, such as the title, number of posts, and other high-level data.
+-- | /info
 tumblrInfo ::
   (HasAPIKey k, MonadThrow m, MonadResource m, MonadReader k m) =>
   BaseHostname ->
@@ -113,6 +114,7 @@ tumblrInfo baseHostname manager = do
 
 -- | Retrieve a Blog Avatar
 -- You can get a blog's avatar in 9 different sizes. The default size is 64x64.
+-- /avatar
 tumblrAvatar ::
   (MonadResource m) =>
   BaseHostname ->
@@ -136,6 +138,7 @@ tumblrAvatar baseHostname msize manager = do
 
 -- | Retrieve Blog's Likes
 -- This method can be used to retrieve the publicly exposed likes from a blog.
+-- /likes
 tumblrLikes ::
   (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) =>
   BaseHostname ->
@@ -160,6 +163,7 @@ tumblrLikes baseHostname mlimit moffset manager = do
   sealConduitT resp $$+- sinkParser jsonValue
 
 -- | Retrieve a Blog's Followers
+-- /followers
 tumblrFollowers ::
   (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
   BaseHostname ->
@@ -188,7 +192,13 @@ tumblrFollowers baseHostname mlimit moffset credential manager = do
   resp <- responseBody <$> http myRequest manager
   sealConduitT resp $$+- sinkParser jsonValue
 
+-- /following
+
+-- /followed_by
+
+
 -- | Retrieve Published Posts
+-- /posts
 tumblrPosts ::
   (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) =>
   BaseHostname ->
@@ -232,6 +242,7 @@ tumblrPosts baseHostname mtype mid mtag mlimit moffset mrebloginfo mnotesinfo mf
   sealConduitT resp $$+- sinkParser jsonValue
 
 -- | Retrieve Queued Posts
+-- /posts/queue
 tumblrQueuedPosts ::
   (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
   BaseHostname ->
@@ -262,7 +273,11 @@ tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
   resp <- responseBody <$> http myRequest manager
   sealConduitT resp $$+- sinkParser jsonValue
 
+-- POST /posts/queue/reorder - TODO
+-- POST /posts/queue/shuffle - TODO
+
 -- | Retrieve Draft Posts
+-- /posts/draft
 tumblrDraftPosts ::
   (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
   BaseHostname ->
@@ -286,6 +301,7 @@ tumblrDraftPosts baseHostname mfilter credential manager = do
   sealConduitT resp $$+- sinkParser jsonValue
 
 -- | Retrieve Submission Posts
+-- /posts/submission
 tumblrSubmissionPosts ::
   (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
   BaseHostname ->
@@ -312,3 +328,52 @@ tumblrSubmissionPosts baseHostname moffset mfilter credential manager = do
         }
   resp <- responseBody <$> http myRequest manager
   sealConduitT resp $$+- sinkParser jsonValue
+
+{-
+/post (legacy) - will not implement
+/post/edit (legacy) - will not implement
+/post/reblog (legacy) - will not implement
+-}
+
+-- POST /posts
+-- GET /posts/{postId}
+
+-- PUT /posts/{postId}
+{-
+tumblrEditPost ::
+  (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
+  BaseHostname ->
+  String ->
+  Post ->
+  Credential ->
+  Manager ->
+  m Post
+tumblrEditPost baseHostname postId newPost credential manager = do
+  oauth <- ask
+  myRequest <-
+    signOAuth oauth credential $
+      tumblrBaseRequest
+        { path =
+            B.pack "/v2/blog/" <> baseHostname <> B.pack "/posts/" <> B.pack postId
+        , method = B.pack "POST"
+        , requestBody = RequestBodyLBS $ encode newPost
+        }
+  resp <- responseBody <$> http myRequest manager
+  sealConduitT resp $$+- sinkParser jsonValue
+-}
+
+-- POST /post/delete
+-- GET /notes
+
+-- GET /user/info
+-- GET /user/dashboard
+-- GET /user/likes
+-- GET /user/following
+-- POST /user/follow
+-- POST /user/unfollow
+-- POST /user/like
+-- POST /user/unlike
+-- GET /user/filtered_content
+-- POST /user/filtered_content
+-- DELETE /user/filtered_content
+-- GET /tagged
