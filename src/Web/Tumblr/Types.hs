@@ -184,7 +184,7 @@ data Post = Post
     postState :: PostState,
     postFormat :: PostFormat,
     postReblogKey :: String,
-    postTags :: [String],
+    posttags:: [String],
     noteCount :: Int,
     postBookmarklet :: Bool,
     postMobile :: Bool,
