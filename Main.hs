@@ -1,14 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE UnicodeSyntax     #-}
 
-import qualified Network.HTTP.Conduit as NetConduit
-import qualified Web.Tumblr as Tumblr
-import qualified Web.Tumblr.Types as Tumblr.Types
-import Control.Monad.Trans.Resource
-import Control.Monad.Reader
-import qualified Data.ByteString.Lazy as LB
+import           Control.Monad.Reader
+import           Control.Monad.Trans.Resource
+import qualified Data.ByteString.Lazy         as LB
+import qualified Network.HTTP.Conduit         as NetConduit
+import qualified Web.Tumblr                   as Tumblr
+import qualified Web.Tumblr.Types             as Tumblr.Types
 
 
-oauth = Tumblr.tumblrOAuth 
+oauth = Tumblr.tumblrOAuth
         "[OAuth Consumer Key]"
         "[Secret Key]"
 
@@ -20,23 +21,23 @@ getTumblrLikes mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrLikes host
 
 getTumblrPosts mgr hostname = runResourceT $ runReaderT (Tumblr.tumblrPosts hostname Nothing Nothing Nothing Nothing Nothing Nothing Nothing Nothing mgr) oauth
 
-getTumblrFollowers mgr hostname = runResourceT $ do 
+getTumblrFollowers mgr hostname = runResourceT $ do
    credential <- Tumblr.tumblrAuthorize oauth mgr
    runReaderT (Tumblr.tumblrFollowers hostname Nothing Nothing credential mgr) oauth
 
-getTumblrQueuedPosts mgr hostname = runResourceT $ do 
+getTumblrQueuedPosts mgr hostname = runResourceT $ do
    credential <- Tumblr.tumblrAuthorize oauth mgr
    runReaderT (Tumblr.tumblrQueuedPosts hostname Nothing Nothing Nothing credential mgr) oauth
 
-getTumblrDraftPosts mgr hostname = runResourceT $ do 
+getTumblrDraftPosts mgr hostname = runResourceT $ do
    credential <- Tumblr.tumblrAuthorize oauth mgr
    runReaderT (Tumblr.tumblrDraftPosts hostname Nothing credential mgr) oauth
-   
-getTumblrSubmissionPosts mgr hostname = runResourceT $ do 
+
+getTumblrSubmissionPosts mgr hostname = runResourceT $ do
    credential <- Tumblr.tumblrAuthorize oauth mgr
    runReaderT (Tumblr.tumblrSubmissionPosts hostname Nothing Nothing credential mgr) oauth
 
-main = do  
+main = do
   mgr <- NetConduit.newManager NetConduit.def
   let hostname = "144c.tumblr.com"
   val <- getTumblrInfo mgr hostname

@@ -1,25 +1,26 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE UnicodeSyntax    #-}
 
 module Web.Tumblr where
 
-import Conduit
-import Control.Arrow
-import Control.Monad.Reader
-import Data.Aeson
-import Data.Attoparsec.ByteString
-import Data.ByteString (ByteString)
-import qualified Data.ByteString.Char8 as B
-import qualified Data.ByteString.Lazy as LB
-import Data.Char
-import Data.Conduit.Attoparsec
-import qualified Data.Conduit.Binary as CB
-import qualified Data.HashMap.Strict as HM
-import Data.Maybe
-import Network.HTTP.Conduit
-import Network.HTTP.Types
-import Web.Authenticate.OAuth
-import Web.Browser
-import Web.Tumblr.Types
+import           Conduit
+import           Control.Arrow
+import           Control.Monad.Reader
+import           Data.Aeson
+import           Data.Attoparsec.ByteString
+import           Data.ByteString            (ByteString)
+import qualified Data.ByteString.Char8      as B
+import qualified Data.ByteString.Lazy       as LB
+import           Data.Char
+import           Data.Conduit.Attoparsec
+import qualified Data.Conduit.Binary        as CB
+import qualified Data.HashMap.Strict        as HM
+import           Data.Maybe
+import           Network.HTTP.Conduit
+import           Network.HTTP.Types
+import           Web.Authenticate.OAuth
+import           Web.Browser
+import           Web.Tumblr.Types
 
 newtype AvatarSize = AvatarSize {getAvatarSize :: Int}
 
@@ -36,9 +37,9 @@ instance HasAPIKey ByteString where
 instance HasAPIKey OAuth where
   getAPIKey = oauthConsumerKey
 
-tumblrOAuth ::
+tumblrOAuth ∷
   -- | The Tumblr API key
-  ByteString ->
+  ByteString →
   -- | The Tumblr API secret to use
   ByteString ->
   OAuth
@@ -58,9 +59,9 @@ tumblrOAuth key secret =
 --   The user is sent to Tumblr to authorize your app and then has to paste the verifier.
 --   TODO: Cleaner, more elegant solution
 --   TODO: Store the obtained tokens
-tumblrAuthorize ::
-  (MonadResource m) =>
-  OAuth ->
+tumblrAuthorize ∷
+  (MonadResource m) ⇒
+  OAuth →
   Manager ->
   m Credential
 tumblrAuthorize oauth mgr = do
@@ -75,35 +76,35 @@ tumblrAuthorize oauth mgr = do
   let tempCred' = injectVerifier (B.pack verifier) tempCred
   getAccessToken oauth tempCred' mgr
 
-tumblrBaseRequest :: Request
+tumblrBaseRequest ∷ Request
 tumblrBaseRequest =
   defaultRequest
     { host = B.pack "api.tumblr.com"
     }
 
-reduceFirst :: ByteString -> ByteString
+reduceFirst ∷ ByteString → ByteString
 reduceFirst = maybe B.empty (uncurry B.cons . first toLower) . B.uncons
 
-renderQueryCull :: Bool -> Query -> ByteString
+renderQueryCull ∷ Bool → Query -> ByteString
 renderQueryCull b = renderQuery b . filter (isJust . snd)
 
 type BaseHostname = ByteString
 
-jsonValue :: (FromJSON a) => Parser a
+jsonValue ∷ (FromJSON a) ⇒ Parser a
 jsonValue =
   json >>= \v -> case fromJSON v of
     Error s -> fail s
     Success x -> case HM.lookup "response" x of
       Nothing -> fail "Invalid response data"
       Just w -> case fromJSON w of
-        Error s -> fail s
+        Error s   -> fail s
         Success x -> return x
 
 -- | This method returns general information about the blog, such as the title, number of posts, and other high-level data.
 -- | /info
-tumblrInfo ::
-  (HasAPIKey k, MonadThrow m, MonadResource m, MonadReader k m) =>
-  BaseHostname ->
+tumblrInfo ∷
+  (HasAPIKey k, MonadThrow m, MonadResource m, MonadReader k m) ⇒
+  BaseHostname →
   Manager ->
   m BlogInfo
 tumblrInfo baseHostname manager = do
@@ -115,9 +116,9 @@ tumblrInfo baseHostname manager = do
 -- | Retrieve a Blog Avatar
 -- You can get a blog's avatar in 9 different sizes. The default size is 64x64.
 -- /avatar
-tumblrAvatar ::
-  (MonadResource m) =>
-  BaseHostname ->
+tumblrAvatar ∷
+  (MonadResource m) ⇒
+  BaseHostname →
   -- | The size of the avatar (square, one value for both length and width). Must be one of the values: 16, 24, 30, 40, 48, 64, 96, 128, 512
   Maybe AvatarSize ->
   Manager ->
@@ -139,9 +140,9 @@ tumblrAvatar baseHostname msize manager = do
 -- | Retrieve Blog's Likes
 -- This method can be used to retrieve the publicly exposed likes from a blog.
 -- /likes
-tumblrLikes ::
-  (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) =>
-  BaseHostname ->
+tumblrLikes ∷
+  (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) ⇒
+  BaseHostname →
   -- | The number of results to return: 1–20, inclusive. Default: 20
   Maybe Int ->
   -- | Liked post number to start at. Default: 0
@@ -164,9 +165,9 @@ tumblrLikes baseHostname mlimit moffset manager = do
 
 -- | Retrieve a Blog's Followers
 -- /followers
-tumblrFollowers ::
-  (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
-  BaseHostname ->
+tumblrFollowers ∷
+  (MonadResource m, MonadReader OAuth m, MonadThrow m) ⇒
+  BaseHostname →
   -- | The number of results to return: 1–20, inclusive. Default: 20
   Maybe Int ->
   -- | Result to start at. Default: 0 (first follower)
@@ -199,9 +200,9 @@ tumblrFollowers baseHostname mlimit moffset credential manager = do
 
 -- | Retrieve Published Posts
 -- /posts
-tumblrPosts ::
-  (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) =>
-  BaseHostname ->
+tumblrPosts ∷
+  (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) ⇒
+  BaseHostname →
   -- | The type of post to return.
   Maybe PostType ->
   -- | A specific post ID. Returns the single post specified or (if not found) a 404 error.
@@ -243,9 +244,9 @@ tumblrPosts baseHostname mtype mid mtag mlimit moffset mrebloginfo mnotesinfo mf
 
 -- | Retrieve Queued Posts
 -- /posts/queue
-tumblrQueuedPosts ::
-  (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
-  BaseHostname ->
+tumblrQueuedPosts ∷
+  (MonadResource m, MonadReader OAuth m, MonadThrow m) ⇒
+  BaseHostname →
   -- | The number of results to return: 1–20, inclusive. Default: 20
   Maybe Int ->
   -- | Post number to start at. Default: 0
@@ -278,9 +279,9 @@ tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
 
 -- | Retrieve Draft Posts
 -- /posts/draft
-tumblrDraftPosts ::
-  (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
-  BaseHostname ->
+tumblrDraftPosts ∷
+  (MonadResource m, MonadReader OAuth m, MonadThrow m) ⇒
+  BaseHostname →
   -- | Specifies the post format to return, other than HTML.
   Maybe PostFilter ->
   -- | OAuth authentication credentials
@@ -302,9 +303,9 @@ tumblrDraftPosts baseHostname mfilter credential manager = do
 
 -- | Retrieve Submission Posts
 -- /posts/submission
-tumblrSubmissionPosts ::
-  (MonadResource m, MonadReader OAuth m, MonadThrow m) =>
-  BaseHostname ->
+tumblrSubmissionPosts ∷
+  (MonadResource m, MonadReader OAuth m, MonadThrow m) ⇒
+  BaseHostname →
   -- | Post number to start at. Default: 0
   Maybe Int ->
   -- | Specifies the post format to return, other than HTML.

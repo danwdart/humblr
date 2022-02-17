@@ -1,2 +1,3 @@
-import Distribution.Simple
+{-# LANGUAGE UnicodeSyntax #-}
+import           Distribution.Simple
 main = defaultMain
