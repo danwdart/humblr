@@ -29,7 +29,7 @@ data PostType = Text | Quote | Link | Answer | Video | Audio | Photo | Chat deri
 data PostFilter = PlainText | Raw deriving (Eq, Show)
 
 class HasAPIKey k where
-  getAPIKey :: k -> ByteString
+  getAPIKey :: k → ByteString
 
 instance HasAPIKey ByteString where
   getAPIKey = id
@@ -41,7 +41,7 @@ tumblrOAuth ∷
   -- | The Tumblr API key
   ByteString →
   -- | The Tumblr API secret to use
-  ByteString ->
+  ByteString →
   OAuth
 tumblrOAuth key secret =
   newOAuth
@@ -62,7 +62,7 @@ tumblrOAuth key secret =
 tumblrAuthorize ∷
   (MonadResource m) ⇒
   OAuth →
-  Manager ->
+  Manager →
   m Credential
 tumblrAuthorize oauth mgr = do
   tempCred <- getTemporaryCredential oauth mgr
@@ -85,7 +85,7 @@ tumblrBaseRequest =
 reduceFirst ∷ ByteString → ByteString
 reduceFirst = maybe B.empty (uncurry B.cons . first toLower) . B.uncons
 
-renderQueryCull ∷ Bool → Query -> ByteString
+renderQueryCull ∷ Bool → Query → ByteString
 renderQueryCull b = renderQuery b . filter (isJust . snd)
 
 type BaseHostname = ByteString
@@ -105,7 +105,7 @@ jsonValue =
 tumblrInfo ∷
   (HasAPIKey k, MonadThrow m, MonadResource m, MonadReader k m) ⇒
   BaseHostname →
-  Manager ->
+  Manager →
   m BlogInfo
 tumblrInfo baseHostname manager = do
   apiKey <- asks getAPIKey
@@ -120,8 +120,8 @@ tumblrAvatar ∷
   (MonadResource m) ⇒
   BaseHostname →
   -- | The size of the avatar (square, one value for both length and width). Must be one of the values: 16, 24, 30, 40, 48, 64, 96, 128, 512
-  Maybe AvatarSize ->
-  Manager ->
+  Maybe AvatarSize →
+  Manager →
   m LB.ByteString
 tumblrAvatar baseHostname msize manager = do
   let myRequest =
@@ -144,10 +144,10 @@ tumblrLikes ∷
   (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) ⇒
   BaseHostname →
   -- | The number of results to return: 1–20, inclusive. Default: 20
-  Maybe Int ->
+  Maybe Int →
   -- | Liked post number to start at. Default: 0
-  Maybe Int ->
-  Manager ->
+  Maybe Int →
+  Manager →
   m Likes
 tumblrLikes baseHostname mlimit moffset manager = do
   apiKey <- asks getAPIKey
@@ -169,12 +169,12 @@ tumblrFollowers ∷
   (MonadResource m, MonadReader OAuth m, MonadThrow m) ⇒
   BaseHostname →
   -- | The number of results to return: 1–20, inclusive. Default: 20
-  Maybe Int ->
+  Maybe Int →
   -- | Result to start at. Default: 0 (first follower)
-  Maybe Int ->
+  Maybe Int →
   -- | OAuth authentication credentials
-  Credential ->
-  Manager ->
+  Credential →
+  Manager →
   m Followers
 tumblrFollowers baseHostname mlimit moffset credential manager = do
   oauth <- ask
@@ -204,22 +204,22 @@ tumblrPosts ∷
   (HasAPIKey k, MonadResource m, MonadReader k m, MonadThrow m) ⇒
   BaseHostname →
   -- | The type of post to return.
-  Maybe PostType ->
+  Maybe PostType →
   -- | A specific post ID. Returns the single post specified or (if not found) a 404 error.
-  Maybe Int ->
+  Maybe Int →
   -- | tag to which to limit the response
-  Maybe String ->
+  Maybe String →
   -- | limit
-  Maybe Int ->
+  Maybe Int →
   -- | Offset: Post number to start at.
-  Maybe Int ->
+  Maybe Int →
   -- | Indicates whether to return reblog information (specify true or false). Returns the various reblogged_ fields. UNUSED.
-  Maybe Bool ->
+  Maybe Bool →
   -- |  	Indicates whether to return notes information (specify true or false). Returns note count and note metadata. UNUSED.
-  Maybe Bool ->
+  Maybe Bool →
   -- | Specifies the post format to return, other than HTML.
-  Maybe PostFilter ->
-  Manager ->
+  Maybe PostFilter →
+  Manager →
   m Posts
 tumblrPosts baseHostname mtype mid mtag mlimit moffset mrebloginfo mnotesinfo mfilter manager = do
   apiKey <- asks getAPIKey
@@ -248,14 +248,14 @@ tumblrQueuedPosts ∷
   (MonadResource m, MonadReader OAuth m, MonadThrow m) ⇒
   BaseHostname →
   -- | The number of results to return: 1–20, inclusive. Default: 20
-  Maybe Int ->
+  Maybe Int →
   -- | Post number to start at. Default: 0
-  Maybe Int ->
+  Maybe Int →
   -- | Specifies the post format to return, other than HTML.
-  Maybe PostFilter ->
+  Maybe PostFilter →
   -- | OAuth authentication credentials
-  Credential ->
-  Manager ->
+  Credential →
+  Manager →
   m JustPosts
 tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
   oauth <- ask
@@ -283,10 +283,10 @@ tumblrDraftPosts ∷
   (MonadResource m, MonadReader OAuth m, MonadThrow m) ⇒
   BaseHostname →
   -- | Specifies the post format to return, other than HTML.
-  Maybe PostFilter ->
+  Maybe PostFilter →
   -- | OAuth authentication credentials
-  Credential ->
-  Manager ->
+  Credential →
+  Manager →
   m JustPosts
 tumblrDraftPosts baseHostname mfilter credential manager = do
   oauth <- ask
@@ -307,12 +307,12 @@ tumblrSubmissionPosts ∷
   (MonadResource m, MonadReader OAuth m, MonadThrow m) ⇒
   BaseHostname →
   -- | Post number to start at. Default: 0
-  Maybe Int ->
+  Maybe Int →
   -- | Specifies the post format to return, other than HTML.
-  Maybe PostFilter ->
+  Maybe PostFilter →
   -- | OAuth authentication credentials
-  Credential ->
-  Manager ->
+  Credential →
+  Manager →
   m JustPosts
 tumblrSubmissionPosts baseHostname moffset mfilter credential manager = do
   oauth <- ask
