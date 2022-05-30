@@ -13,7 +13,7 @@ steps:
   #     # not already present. You may want to disable it if you configure
   #     # language extensions using some other method than pragmas. Default:
   #     # true.
-        add_language_pragma: true
+        add_language_pragma: false
 
   # Align the right hand side of some elements.  This is quite conservative
   # and only applies to statements where each element occupies a single
