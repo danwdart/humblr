@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE UnicodeSyntax     #-}
 
 import           Control.Monad.Reader
 import           Control.Monad.Trans.Resource

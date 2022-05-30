@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE UnicodeSyntax    #-}
 
 module Web.Tumblr where
 
