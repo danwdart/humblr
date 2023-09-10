@@ -35,19 +35,19 @@ library
                      , aeson
                      , aeson-casing
                      , attoparsec
-                     , attoparsec-conduit >= 1.0.0
+                     # , attoparsec-conduit >= 1.0.0
                      , authenticate-oauth
                      , bytestring >=0.9
                      , conduit >= 1.0.5
                      , conduit-extra
                      , http-conduit >=1.9
                      , http-types >= 0.7
-                     , monad-control 
-                     , old-locale >= 1.0
+                     # , monad-control 
+                     # , old-locale >= 1.0
                      , open-browser
-                     , process
+                     # , process
                      , time >= 1.4
-                     , transformers
+                     # , transformers
                      , unordered-containers >= 0.2
   hs-source-dirs:      src
 
