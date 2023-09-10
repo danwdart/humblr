@@ -11,10 +11,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Fetch submodules
-      run: |
-        sed -i 's/git@github.com:/https:\/\/github.com\//g' .gitmodules
-        git submodule update --init --recursive
     - name: Setup SSH key
       uses: shimataro/ssh-key-action@v2
       with:
