@@ -1,5 +1,6 @@
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE UnicodeSyntax    #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE FlexibleContexts   #-}
+{-# LANGUAGE UnicodeSyntax      #-}
 
 module Web.Tumblr where
 
@@ -24,9 +25,9 @@ import           Web.Tumblr.Types
 
 newtype AvatarSize = AvatarSize {getAvatarSize :: Int}
 
-data PostType = Text | Quote | Link | Answer | Video | Audio | Photo | Chat deriving (Eq, Show)
+data PostType = Text | Quote | Link | Answer | Video | Audio | Photo | Chat deriving stock (Eq, Show)
 
-data PostFilter = PlainText | Raw deriving (Eq, Show)
+data PostFilter = PlainText | Raw deriving stock (Eq, Show)
 
 class HasAPIKey k where
   getAPIKey :: k → ByteString
@@ -98,7 +99,7 @@ jsonValue =
       Nothing -> fail "Invalid response data"
       Just w -> case fromJSON w of
         Error s   -> fail s
-        Success x -> return x
+        Success y -> pure y
 
 -- | This method returns general information about the blog, such as the title, number of posts, and other high-level data.
 -- | /info
@@ -221,7 +222,7 @@ tumblrPosts ∷
   Maybe PostFilter →
   Manager →
   m Posts
-tumblrPosts baseHostname mtype mid mtag mlimit moffset mrebloginfo mnotesinfo mfilter manager = do
+tumblrPosts baseHostname mtype mid mtag mlimit moffset mrebloginfo mnotesinfo mfilter' manager = do
   apiKey <- asks getAPIKey
   let myRequest =
         tumblrBaseRequest
@@ -236,7 +237,7 @@ tumblrPosts baseHostname mtype mid mtag mlimit moffset mrebloginfo mnotesinfo mf
                     (B.pack "offset", B.pack . show <$> moffset),
                     (B.pack "reblog_info", reduceFirst . B.pack . show <$> mrebloginfo),
                     (B.pack "notes_info", reduceFirst . B.pack . show <$> mnotesinfo),
-                    (B.pack "filter", reduceFirst . B.pack . show <$> mfilter)
+                    (B.pack "filter", reduceFirst . B.pack . show <$> mfilter')
                   ]
           }
   resp <- responseBody <$> http myRequest manager
@@ -257,7 +258,7 @@ tumblrQueuedPosts ∷
   Credential →
   Manager →
   m JustPosts
-tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
+tumblrQueuedPosts baseHostname mlimit moffset mfilter' credential manager = do
   oauth <- ask
   myRequest <-
     signOAuth oauth credential $
@@ -268,7 +269,7 @@ tumblrQueuedPosts baseHostname mlimit moffset mfilter credential manager = do
                 True
                 [ (B.pack "limit", B.pack . show <$> mlimit),
                   (B.pack "offset", B.pack . show <$> moffset),
-                  (B.pack "filter", reduceFirst . B.pack . show <$> mfilter)
+                  (B.pack "filter", reduceFirst . B.pack . show <$> mfilter')
                 ]
         }
   resp <- responseBody <$> http myRequest manager
@@ -288,7 +289,7 @@ tumblrDraftPosts ∷
   Credential →
   Manager →
   m JustPosts
-tumblrDraftPosts baseHostname mfilter credential manager = do
+tumblrDraftPosts baseHostname mfilter' credential manager = do
   oauth <- ask
   myRequest <-
     signOAuth oauth credential $
@@ -296,7 +297,7 @@ tumblrDraftPosts baseHostname mfilter credential manager = do
         { path =
             B.pack "/v2/blog/" <> baseHostname
               <> B.pack "/posts/draft"
-              <> maybe B.empty (B.append (B.pack "?filter=") . reduceFirst . B.pack . show) mfilter
+              <> maybe B.empty (B.append (B.pack "?filter=") . reduceFirst . B.pack . show) mfilter'
         }
   resp <- responseBody <$> http myRequest manager
   sealConduitT resp $$+- sinkParser jsonValue
@@ -314,7 +315,7 @@ tumblrSubmissionPosts ∷
   Credential →
   Manager →
   m JustPosts
-tumblrSubmissionPosts baseHostname moffset mfilter credential manager = do
+tumblrSubmissionPosts baseHostname moffset mfilter' credential manager = do
   oauth <- ask
   myRequest <-
     signOAuth oauth credential $
@@ -324,7 +325,7 @@ tumblrSubmissionPosts baseHostname moffset mfilter credential manager = do
               <> renderQueryCull
                 True
                 [ (B.pack "offset", B.pack . show <$> moffset),
-                  (B.pack "filter", reduceFirst . B.pack . show <$> mfilter)
+                  (B.pack "filter", reduceFirst . B.pack . show <$> mfilter')
                 ]
         }
   resp <- responseBody <$> http myRequest manager

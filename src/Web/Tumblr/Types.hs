@@ -1,7 +1,9 @@
 {-# LANGUAGE DeriveGeneric       #-}
+{-# LANGUAGE DerivingStrategies  #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UnicodeSyntax       #-}
+{-# OPTIONS_GHC -Wno-partial-fields #-}
 
 module Web.Tumblr.Types where
 
@@ -26,7 +28,7 @@ data BlogInfo = BlogInfo
     blogInfoAskAnon :: Bool,
     blogInfoLikes :: Int
   }
-  deriving (Show, Eq)
+  deriving stock (Show, Eq)
 
 instance FromJSON BlogInfo where
   parseJSON (Object w) =
@@ -44,7 +46,7 @@ instance FromJSON BlogInfo where
   parseJSON _ = empty
 
 newtype Avatar = Avatar {avatarURL :: String}
-  deriving (Show, Eq)
+  deriving stock (Show, Eq)
 
 instance FromJSON Avatar where
   parseJSON (Object v) = Avatar <$> v .: "avatar_url"
@@ -54,13 +56,13 @@ data Likes = Likes
   { likedPosts :: [Post],
     likedCount :: Int
   }
-  deriving (Show, Generic, Eq)
+  deriving stock (Show, Generic, Eq)
 
 instance FromJSON Likes where
   parseJSON = genericParseJSON $ aesonPrefix snakeCase
 
 newtype Followers = Followers {followers :: [User]}
-  deriving (Show, Eq)
+  deriving stock (Show, Eq)
 
 instance FromJSON Followers where
   parseJSON (Object v) = Followers <$> v .: "users"
@@ -71,7 +73,7 @@ data User = User
     userURL :: String,
     userUpdated :: Int
   }
-  deriving (Show, Eq)
+  deriving stock (Show, Eq)
 
 instance FromJSON User where
   parseJSON (Object v) =
@@ -81,7 +83,7 @@ instance FromJSON User where
       <*> v .: "updated"
   parseJSON _ = empty
 
-data Posts = Posts {postsBlog :: BlogInfo, posts :: [Post]} deriving (Show, Eq)
+data Posts = Posts {postsBlog :: BlogInfo, posts :: [Post]} deriving stock (Show, Eq)
 
 instance FromJSON Posts where
   parseJSON o@(Object v) =
@@ -91,7 +93,7 @@ instance FromJSON Posts where
   parseJSON _ = empty
 
 newtype JustPosts = JustPosts {justPosts :: [Post]}
-  deriving (Show, Eq)
+  deriving stock  (Show, Eq)
 
 instance FromJSON JustPosts where
   parseJSON (Object v) =
@@ -99,7 +101,7 @@ instance FromJSON JustPosts where
       <$> v .: "posts"
   parseJSON _ = empty
 
-data PostState = Published | Queued | Draft | Private | Unapproved deriving (Show, Eq)
+data PostState = Published | Queued | Draft | Private | Unapproved deriving stock (Show, Eq)
 
 instance FromJSON PostState where
   parseJSON (String "published") = pure Published
@@ -109,21 +111,21 @@ instance FromJSON PostState where
   parseJSON (String "unapproved") = pure Unapproved
   parseJSON _ = empty
 
-data PostFormat = Html | Markdown deriving (Show, Eq)
+data PostFormat = Html | Markdown deriving stock (Show, Eq)
 
 instance FromJSON PostFormat where
   parseJSON (String "html") = pure Html
   parseJSON (String "markdown") = pure Markdown
   parseJSON _ = empty
 
-data PhotoInfo = PhotoInfo {sizeWidth :: Int, sizeHeight :: Int, photoURL :: String} deriving (Show, Eq)
+data PhotoInfo = PhotoInfo {sizeWidth :: Int, sizeHeight :: Int, photoURL :: String} deriving stock (Show, Eq)
 
 newtype Photo = Photo {originalSize :: PhotoInfo}
-  deriving (Show, Eq)
+  deriving stock (Show, Eq)
 
-data Dialogue = Dialogue {dialogueSpeaker :: String, dialogueSpeakerLabel :: String, dialoguePhrase :: String} deriving (Show, Eq)
+data Dialogue = Dialogue {dialogueSpeaker :: String, dialogueSpeakerLabel :: String, dialoguePhrase :: String} deriving stock (Show, Eq)
 
-data VideoPlayer = VideoPlayer {videoPlayerWidth :: Int, videoPlayerEmbedCode :: String} deriving (Show, Eq)
+data VideoPlayer = VideoPlayer {videoPlayerWidth :: Int, videoPlayerEmbedCode :: String} deriving stock (Show, Eq)
 
 data PostData
   = TextPost {textTitle :: String, textBody :: String}
@@ -144,7 +146,7 @@ data PostData
       }
   | VideoPost {videoCaption :: String, videoPlayer :: [VideoPlayer]}
   | AnswerPost {askingName :: String, askingURL :: String, answerQuestion :: String, answerAnswer :: String}
-  deriving (Show, Eq)
+  deriving stock (Show, Eq)
 
 instance FromJSON PhotoInfo where
   parseJSON (Object v) =
@@ -194,7 +196,7 @@ data Post = Post
     postLiked :: Bool,
     postTypeSpecificData :: PostData
   }
-  deriving (Show, Eq)
+  deriving stock (Show, Eq)
 
 instance FromJSON Post where
   parseJSON (Object v) =
