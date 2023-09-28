@@ -1,27 +1,28 @@
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE FlexibleContexts   #-}
-{-# LANGUAGE UnicodeSyntax      #-}
+{-# LANGUAGE DerivingStrategies  #-}
+{-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE ImportQualifiedPost #-}
+{-# LANGUAGE UnicodeSyntax       #-}
 
 module Web.Tumblr where
 
-import           Conduit
-import           Control.Arrow
-import           Control.Monad.Reader
-import           Data.Aeson
-import           Data.Attoparsec.ByteString
-import           Data.ByteString            (ByteString)
-import qualified Data.ByteString.Char8      as B
-import qualified Data.ByteString.Lazy       as LB
-import           Data.Char
-import           Data.Conduit.Attoparsec
-import qualified Data.Conduit.Binary        as CB
-import qualified Data.HashMap.Strict        as HM
-import           Data.Maybe
-import           Network.HTTP.Conduit
-import           Network.HTTP.Types
-import           Web.Authenticate.OAuth
-import           Web.Browser
-import           Web.Tumblr.Types
+import Conduit
+import Control.Arrow
+import Control.Monad.Reader
+import Data.Aeson
+import Data.Attoparsec.ByteString
+import Data.ByteString            (ByteString)
+import Data.ByteString.Char8      qualified as B
+import Data.ByteString.Lazy       qualified as LB
+import Data.Char
+import Data.Conduit.Attoparsec
+import Data.Conduit.Binary        qualified as CB
+import Data.HashMap.Strict        qualified as HM
+import Data.Maybe
+import Network.HTTP.Conduit
+import Network.HTTP.Types
+import Web.Authenticate.OAuth
+import Web.Browser
+import Web.Tumblr.Types
 
 newtype AvatarSize = AvatarSize {getAvatarSize :: Int}
 

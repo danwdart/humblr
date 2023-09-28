@@ -6,7 +6,7 @@ on:
   push:
   workflow_dispatch:
 jobs:
-  build-and-deploy-ghc96:
+  build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -28,16 +28,11 @@ jobs:
       with:
         name: dandart
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: Build (GHC 9.6)
+    - name: Build
       run: |
-        nix-build --argstr compiler ghc96
-    - name: Push dependencies to Cachix (GHC 9.6)
-      run: |
-        nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc96 --add-root result/shell --indirect) | cachix push dandart
-    - name: Push dependencies to private cache (GHC 9.6)
-      run: |
-        nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc96 --add-root result/shell --indirect) | xargs nix-copy-closure --gzip -s --include-outputs ${{ vars.CACHE_USER }}@${{ vars.CACHE_SERVER }}
-  build-and-deploy-ghc94:
+        nix-build
+  deploy-ghc94:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -59,16 +54,14 @@ jobs:
       with:
         name: dandart
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: Build (GHC 9.4)
-      run: |
-        nix-build --argstr compiler ghc94
     - name: Push dependencies to Cachix (GHC 9.4)
       run: |
         nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc94 --add-root result/shell --indirect) | cachix push dandart
     - name: Push dependencies to private cache (GHC 9.4)
       run: |
         nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc94 --add-root result/shell --indirect) | xargs nix-copy-closure --gzip -s --include-outputs ${{ vars.CACHE_USER }}@${{ vars.CACHE_SERVER }}
-  build-and-deploy-ghc92:
+  deploy-ghc92:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -90,16 +83,14 @@ jobs:
       with:
         name: dandart
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: Build (GHC 9.2)
-      run: |
-        nix-build --argstr compiler ghc92
     - name: Push dependencies to Cachix (GHC 9.2)
       run: |
         nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc92 --add-root result/shell --indirect) | cachix push dandart
     - name: Push dependencies to private cache (GHC 9.2)
       run: |
         nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc92 --add-root result/shell --indirect) | xargs nix-copy-closure --gzip -s --include-outputs ${{ vars.CACHE_USER }}@${{ vars.CACHE_SERVER }}
-  build-and-deploy-ghc90:
+  deploy-ghc90:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -121,16 +112,14 @@ jobs:
       with:
         name: dandart
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: Build (GHC 9.0)
-      run: |
-        nix-build --argstr compiler ghc90
     - name: Push dependencies to Cachix (GHC 9.0)
       run: |
         nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc90 --add-root result/shell --indirect) | cachix push dandart
     - name: Push dependencies to private cache (GHC 9.0)
       run: |
         nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc90 --add-root result/shell --indirect) | xargs nix-copy-closure --gzip -s --include-outputs ${{ vars.CACHE_USER }}@${{ vars.CACHE_SERVER }}
-  build-and-deploy-ghc810:
+  deploy-ghc810:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -152,43 +141,9 @@ jobs:
       with:
         name: dandart
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: Build (GHC 8.10)
-      run: |
-        nix-build --argstr compiler ghc810
     - name: Push dependencies to Cachix (GHC 8.10)
       run: |
         nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc810 --add-root result/shell --indirect) | cachix push dandart
     - name: Push dependencies to private cache (GHC 8.10)
       run: |
         nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc810 --add-root result/shell --indirect) | xargs nix-copy-closure --gzip -s --include-outputs ${{ vars.CACHE_USER }}@${{ vars.CACHE_SERVER }}
-  build-and-deploy-ghc88:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Setup SSH key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-    - name: Install Nix
-      uses: cachix/install-nix-action@v20
-      with:
-        nix_path: nixpkgs=channel:nixos-unstable
-        extra_nix_config: |
-          trusted-public-keys = ${{ vars.CACHE_TRUSTED_PUBLIC_KEYS }}
-          substituters = ${{ vars.CACHE_SUBSTITUTERS }}
-    - name: Setup Cachix
-      uses: cachix/cachix-action@v12
-      with:
-        name: dandart
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: Build (GHC 8.8)
-      run: |
-        nix-build --argstr compiler ghc88
-    - name: Push dependencies to Cachix (GHC 8.8)
-      run: |
-        nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc88 --add-root result/shell --indirect) | cachix push dandart
-    - name: Push dependencies to private cache (GHC 8.8)
-      run: |
-        nix-store -qR --include-outputs $(nix-instantiate shell.nix --argstr compiler ghc88 --add-root result/shell --indirect) | xargs nix-copy-closure --gzip -s --include-outputs ${{ vars.CACHE_USER }}@${{ vars.CACHE_SERVER }}
