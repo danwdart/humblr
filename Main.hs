@@ -1,11 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import           Control.Monad.Reader
-import           Control.Monad.Trans.Resource
-import qualified Data.ByteString.Lazy         as LB
-import qualified Network.HTTP.Conduit         as NetConduit
-import qualified Web.Tumblr                   as Tumblr
-import qualified Web.Tumblr.Types             as Tumblr.Types
+import Control.Monad.Reader
+import Control.Monad.Trans.Resource
+import Data.ByteString.Lazy         qualified as LB
+import Network.HTTP.Conduit         qualified as NetConduit
+import Web.Tumblr                   qualified as Tumblr
+import Web.Tumblr.Types             qualified as Tumblr.Types
 
 
 oauth = Tumblr.tumblrOAuth

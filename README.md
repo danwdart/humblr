@@ -9,9 +9,9 @@ Usage
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
 
-import qualified Network.HTTP.Conduit as NetConduit
-import qualified Web.Tumblr as Tumblr
-import qualified Web.Tumblr.Types as Tumblr.Types
+import Network.HTTP.Conduit qualified as NetConduit
+import Web.Tumblr qualified as Tumblr
+import Web.Tumblr.Types qualified as Tumblr.Types
 import Control.Monad.Trans.Resource
 import Control.Monad.Reader
 import Data.ByteString(ByteString)

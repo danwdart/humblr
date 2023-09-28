@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric       #-}
 {-# LANGUAGE DerivingStrategies  #-}
+
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UnicodeSyntax       #-}
@@ -9,24 +10,24 @@ module Web.Tumblr.Types where
 
 import Control.Applicative (empty)
 import Data.Aeson
-import Data.Time (UTCTime)
-import Data.Time.Format (parseTimeM, defaultTimeLocale)
+import Data.Aeson.Casing   (aesonPrefix, snakeCase)
+import Data.Time           (UTCTime)
+import Data.Time.Format    (defaultTimeLocale, parseTimeM)
 import Data.Time.LocalTime (zonedTimeToUTC)
-import Data.Aeson.Casing ( aesonPrefix, snakeCase )
-import GHC.Generics ( Generic )
+import GHC.Generics        (Generic)
 
 -- for reference, visit http://www.tumblr.com/docs/en/api/v2
 
 data BlogInfo = BlogInfo
-  { blogInfoTitle :: String,
-    blogInfoPosts :: Int,
-    blogInfoName :: String,
-    blogInfoURL :: Maybe String,
-    blogInfoUpdated :: Int, -- seconds since epoch
+  { blogInfoTitle       :: String,
+    blogInfoPosts       :: Int,
+    blogInfoName        :: String,
+    blogInfoURL         :: Maybe String,
+    blogInfoUpdated     :: Int, -- seconds since epoch
     blogInfoDescription :: String,
-    blogInfoAsk :: Bool,
-    blogInfoAskAnon :: Bool,
-    blogInfoLikes :: Int
+    blogInfoAsk         :: Bool,
+    blogInfoAskAnon     :: Bool,
+    blogInfoLikes       :: Int
   }
   deriving stock (Show, Eq)
 
@@ -50,7 +51,7 @@ newtype Avatar = Avatar {avatarURL :: String}
 
 instance FromJSON Avatar where
   parseJSON (Object v) = Avatar <$> v .: "avatar_url"
-  parseJSON _ = empty
+  parseJSON _          = empty
 
 data Likes = Likes
   { likedPosts :: [Post],
@@ -66,11 +67,11 @@ newtype Followers = Followers {followers :: [User]}
 
 instance FromJSON Followers where
   parseJSON (Object v) = Followers <$> v .: "users"
-  parseJSON _ = empty
+  parseJSON _          = empty
 
 data User = User
-  { userName :: String,
-    userURL :: String,
+  { userName    :: String,
+    userURL     :: String,
     userUpdated :: Int
   }
   deriving stock (Show, Eq)
@@ -104,19 +105,19 @@ instance FromJSON JustPosts where
 data PostState = Published | Queued | Draft | Private | Unapproved deriving stock (Show, Eq)
 
 instance FromJSON PostState where
-  parseJSON (String "published") = pure Published
-  parseJSON (String "queued") = pure Queued
-  parseJSON (String "draft") = pure Draft
-  parseJSON (String "private") = pure Private
+  parseJSON (String "published")  = pure Published
+  parseJSON (String "queued")     = pure Queued
+  parseJSON (String "draft")      = pure Draft
+  parseJSON (String "private")    = pure Private
   parseJSON (String "unapproved") = pure Unapproved
-  parseJSON _ = empty
+  parseJSON _                     = empty
 
 data PostFormat = Html | Markdown deriving stock (Show, Eq)
 
 instance FromJSON PostFormat where
-  parseJSON (String "html") = pure Html
+  parseJSON (String "html")     = pure Html
   parseJSON (String "markdown") = pure Markdown
-  parseJSON _ = empty
+  parseJSON _                   = empty
 
 data PhotoInfo = PhotoInfo {sizeWidth :: Int, sizeHeight :: Int, photoURL :: String} deriving stock (Show, Eq)
 
@@ -134,15 +135,15 @@ data PostData
   | LinkPost {linkTitle :: String, linkURL :: String, linkDescription :: String}
   | ChatPost {chatTitle :: Maybe String, chatBody :: String, chatDialogue :: [Dialogue]}
   | AudioPost
-      { audioCaption :: String,
-        audioPlayer :: String,
-        audioPlays :: Int,
-        audioAlbumArt :: Maybe String,
-        audioArtist :: Maybe String,
-        audioAlbum :: Maybe String,
-        audioTrackName :: Maybe String,
+      { audioCaption     :: String,
+        audioPlayer      :: String,
+        audioPlays       :: Int,
+        audioAlbumArt    :: Maybe String,
+        audioArtist      :: Maybe String,
+        audioAlbum       :: Maybe String,
+        audioTrackName   :: Maybe String,
         audioTrackNumber :: Maybe Int,
-        audioYear :: Maybe Int
+        audioYear        :: Maybe Int
       }
   | VideoPost {videoCaption :: String, videoPlayer :: [VideoPlayer]}
   | AnswerPost {askingName :: String, askingURL :: String, answerQuestion :: String, answerAnswer :: String}
@@ -179,21 +180,21 @@ instance FromJSON VideoPlayer where
   parseJSON _ = empty
 
 data Post = Post
-  { postBlogName :: String,
-    postId :: Int,
-    postURL :: String,
-    postDate :: UTCTime,
-    postTime :: Int,
-    postState :: PostState,
-    postFormat :: PostFormat,
-    postReblogKey :: String,
-    posttags:: [String],
-    noteCount :: Int,
-    postBookmarklet :: Bool,
-    postMobile :: Bool,
-    postSourceURL :: Maybe String,
-    postSourceTitle :: Maybe String,
-    postLiked :: Bool,
+  { postBlogName         :: String,
+    postId               :: Int,
+    postURL              :: String,
+    postDate             :: UTCTime,
+    postTime             :: Int,
+    postState            :: PostState,
+    postFormat           :: PostFormat,
+    postReblogKey        :: String,
+    posttags             :: [String],
+    noteCount            :: Int,
+    postBookmarklet      :: Bool,
+    postMobile           :: Bool,
+    postSourceURL        :: Maybe String,
+    postSourceTitle      :: Maybe String,
+    postLiked            :: Bool,
     postTypeSpecificData :: PostData
   }
   deriving stock (Show, Eq)
