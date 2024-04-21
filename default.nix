@@ -29,8 +29,8 @@ let
 in
 {
   inherit shell;
-  humblr_ghc810 = lib.justStaticExecutables (myHaskellPackages "ghc810").humblr;
-  humblr_ghc90 = lib.justStaticExecutables (myHaskellPackages "ghc90").humblr;
   humblr_ghc92 = lib.justStaticExecutables (myHaskellPackages "ghc92").humblr;
   humblr_ghc94 = lib.justStaticExecutables (myHaskellPackages "ghc94").humblr;
+  humblr_ghc96 = lib.justStaticExecutables (myHaskellPackages "ghc96").humblr;
+  humblr_ghc98 = lib.justStaticExecutables (myHaskellPackages "ghc98").humblr;
 }

@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP                 #-}
 {-# LANGUAGE DerivingStrategies  #-}
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE ImportQualifiedPost #-}
@@ -7,6 +8,9 @@ module Web.Tumblr where
 
 import Conduit
 import Control.Arrow
+#if MIN_VERSION_base(4,18,0)
+import Control.Monad              (unless)
+#endif
 import Control.Monad.Reader
 import Data.Aeson
 import Data.Attoparsec.ByteString

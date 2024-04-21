@@ -1,5 +1,5 @@
 name:          humblr
-version:       0.3.1.0
+version:       0.4.0.0
 synopsis:      Haskell wrapper for the Tumblr API
 homepage:      https://github.com/danwdart/humblr
 license:       BSD3
@@ -15,33 +15,13 @@ library
     DerivingStrategies
     ImportQualifiedPost
     UnicodeSyntax
-
-  if impl(ghc >=9.2)
-    default-language: GHC2021
-    ghc-options:
-      -Weverything -Wno-unsafe -Wno-missing-import-lists
-      -Wno-missing-export-lists -Wno-implicit-prelude
-      -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
-      -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
-      -with-rtsopts=-N
-
-  else
-    default-language: Haskell2010
-
-    if impl(ghc >=8.10)
-      ghc-options:
-        -Weverything -Wno-unsafe -Wno-missing-import-lists
-        -Wno-missing-export-lists -Wno-implicit-prelude
-        -Wno-missing-safe-haskell-mode -Wno-missing-local-signatures
-        -Werror -haddock -threaded -rtsopts -with-rtsopts=-N
-
-    else
-      ghc-options:
-        -Weverything -Wno-unsafe -Wno-missing-import-lists
-        -Wno-missing-export-lists -Wno-implicit-prelude
-        -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
-        -with-rtsopts=-N
-
+  default-language: GHC2021
+  ghc-options:
+    -Weverything -Wno-unsafe -Wno-missing-import-lists
+    -Wno-missing-export-lists -Wno-implicit-prelude
+    -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
+    -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
+    -with-rtsopts=-N
   ghcjs-options:      -dedupe
   exposed-modules:
     Web.Tumblr
@@ -52,7 +32,7 @@ library
     , aeson-casing
     , attoparsec
     , authenticate-oauth
-    , base                  >=4.14.3.0 && <4.18
+    , base                  >=4.16.4.0 && <4.20
     , bytestring            >=0.9
     , conduit               >=1.0.5
     , conduit-extra
@@ -79,32 +59,14 @@ test-suite humblr-test
     DerivingStrategies
     ImportQualifiedPost
     UnicodeSyntax
-
-  if impl(ghc >=9.2)
-    ghc-options:
-      -Weverything -Wno-unsafe -Wno-missing-import-lists
-      -Wno-missing-export-lists -Wno-implicit-prelude
-      -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
-      -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
-      -with-rtsopts=-N
-
-  else
-    if impl(ghc >=8.10)
-      ghc-options:
-        -Weverything -Wno-unsafe -Wno-missing-import-lists
-        -Wno-missing-export-lists -Wno-implicit-prelude
-        -Wno-missing-safe-haskell-mode -Wno-missing-local-signatures
-        -Werror -haddock -threaded -rtsopts -with-rtsopts=-N
-
-    else
-      ghc-options:
-        -Weverything -Wno-unsafe -Wno-missing-import-lists
-        -Wno-missing-export-lists -Wno-implicit-prelude
-        -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
-        -with-rtsopts=-N
-
+  ghc-options:
+    -Weverything -Wno-unsafe -Wno-missing-import-lists
+    -Wno-missing-export-lists -Wno-implicit-prelude
+    -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
+    -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
+    -with-rtsopts=-N
   ghcjs-options:      -dedupe
   other-modules:      Web.TumblrSpec
   build-depends:
-      base   >=4.14.3.0 && <4.18
+      base   >=4.16.4.0 && <4.20
     , hspec
