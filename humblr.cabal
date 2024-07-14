@@ -15,13 +15,15 @@ library
     DerivingStrategies
     ImportQualifiedPost
     UnicodeSyntax
-  default-language: GHC2021
+
+  default-language:   GHC2021
   ghc-options:
     -Weverything -Wno-unsafe -Wno-missing-import-lists
     -Wno-missing-export-lists -Wno-implicit-prelude
     -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
-    -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
-    -with-rtsopts=-N
+    -Wno-missing-poly-kind-signatures -Wno-missing-local-signatures
+    -Werror -haddock -threaded -rtsopts -with-rtsopts=-N
+
   ghcjs-options:      -dedupe
   exposed-modules:
     Web.Tumblr
@@ -59,12 +61,14 @@ test-suite humblr-test
     DerivingStrategies
     ImportQualifiedPost
     UnicodeSyntax
+
   ghc-options:
     -Weverything -Wno-unsafe -Wno-missing-import-lists
     -Wno-missing-export-lists -Wno-implicit-prelude
     -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
-    -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
-    -with-rtsopts=-N
+    -Wno-missing-poly-kind-signatures -Wno-missing-local-signatures
+    -Werror -haddock -threaded -rtsopts -with-rtsopts=-N
+
   ghcjs-options:      -dedupe
   other-modules:      Web.TumblrSpec
   build-depends:
