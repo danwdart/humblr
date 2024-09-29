@@ -3,7 +3,7 @@
   haskell-tools ? import (builtins.fetchTarball "https://github.com/danwdart/haskell-tools/archive/master.tar.gz") {
     nixpkgs = nixpkgs;
   },
-  compiler ? "ghc98"
+  compiler ? "ghc910"
 } :
 let
   gitignore = nixpkgs.nix-gitignore.gitignoreSourcePure [ ./.gitignore ];
@@ -29,8 +29,7 @@ let
 in
 {
   inherit shell;
-  humblr_ghc92 = lib.justStaticExecutables (myHaskellPackages "ghc92").humblr;
-  humblr_ghc94 = lib.justStaticExecutables (myHaskellPackages "ghc94").humblr;
   humblr_ghc96 = lib.justStaticExecutables (myHaskellPackages "ghc96").humblr;
   humblr_ghc98 = lib.justStaticExecutables (myHaskellPackages "ghc98").humblr;
+  humblr_ghc910 = lib.justStaticExecutables (myHaskellPackages "ghc910").humblr;
 }
