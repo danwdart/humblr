@@ -13,6 +13,7 @@ import Control.Monad              (unless)
 #endif
 import Control.Monad.Reader
 import Data.Aeson
+import Data.Aeson.Parser
 import Data.Attoparsec.ByteString
 import Data.ByteString            (ByteString)
 import Data.ByteString.Char8      qualified as B
@@ -97,8 +98,7 @@ renderQueryCull b = renderQuery b . filter (isJust . snd)
 type BaseHostname = ByteString
 
 jsonValue ∷ (FromJSON a) ⇒ Parser a
-jsonValue =
-  json >>= \v -> case fromJSON v of
+jsonValue = json >>= \v -> case fromJSON v of
     Error s -> fail s
     Success x -> case HM.lookup "response" x of
       Nothing -> fail "Invalid response data"

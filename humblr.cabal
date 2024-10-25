@@ -1,40 +1,40 @@
+cabal-version: 3.0
 name:          humblr
-version:       0.4.0.0
+version:       0.5.0.0
 synopsis:      Haskell wrapper for the Tumblr API
 homepage:      https://github.com/danwdart/humblr
-license:       BSD3
+license:       BSD-3-Clause
 license-file:  LICENSE
 author:        Nathan "Taneb" van Doorn, Dan Dart
 maintainer:    cabal@dandart.co.uk
 category:      Web
 build-type:    Simple
-cabal-version: >=1.8
 
 library
   default-extensions:
     DerivingStrategies
     ImportQualifiedPost
     UnicodeSyntax
-
   default-language:   GHC2021
   ghc-options:
     -Weverything -Wno-unsafe -Wno-missing-import-lists
     -Wno-missing-export-lists -Wno-implicit-prelude
     -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
-    -Wno-missing-poly-kind-signatures -Wno-missing-local-signatures
+    -Wno-missing-local-signatures
     -Werror -haddock -threaded -rtsopts -with-rtsopts=-N
-
+  if impl(ghc >= 9.8)
+    ghc-options:
+      -Wno-missing-poly-kind-signatures 
   ghcjs-options:      -dedupe
   exposed-modules:
     Web.Tumblr
     Web.Tumblr.Types
-
   build-depends:
-      aeson
+      aeson                 >= 2.0.0.0
     , aeson-casing
     , attoparsec
     , authenticate-oauth
-    , base                  >=4.16.4.0 && <4.20
+    , base                  >=4.16.4.0 && <4.21
     , bytestring            >=0.9
     , conduit               >=1.0.5
     , conduit-extra
@@ -44,7 +44,6 @@ library
     , open-browser
     , time                  >=1.4
     , unordered-containers  >=0.2
-
   -- , attoparsec-conduit >= 1.0.0
   -- , monad-control 
   -- , old-locale >= 1.0
@@ -61,16 +60,18 @@ test-suite humblr-test
     DerivingStrategies
     ImportQualifiedPost
     UnicodeSyntax
-
   ghc-options:
     -Weverything -Wno-unsafe -Wno-missing-import-lists
     -Wno-missing-export-lists -Wno-implicit-prelude
     -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
-    -Wno-missing-poly-kind-signatures -Wno-missing-local-signatures
+    -Wno-missing-local-signatures
     -Werror -haddock -threaded -rtsopts -with-rtsopts=-N
-
+  if impl(ghc >= 9.8)
+    ghc-options:
+      -Wno-missing-poly-kind-signatures
   ghcjs-options:      -dedupe
   other-modules:      Web.TumblrSpec
   build-depends:
-      base   >=4.16.4.0 && <4.20
+      base   >=4.16.4.0 && <4.21
     , hspec
+  build-tool-depends: hspec-discover:hspec-discover
