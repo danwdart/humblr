@@ -15,22 +15,25 @@ library
     DerivingStrategies
     ImportQualifiedPost
     UnicodeSyntax
+
   default-language:   GHC2021
   ghc-options:
     -Weverything -Wno-unsafe -Wno-missing-import-lists
     -Wno-missing-export-lists -Wno-implicit-prelude
     -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
-    -Wno-missing-local-signatures
-    -Werror -haddock -threaded -rtsopts -with-rtsopts=-N
-  if impl(ghc >= 9.8)
-    ghc-options:
-      -Wno-missing-poly-kind-signatures 
+    -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
+    -with-rtsopts=-N
+
+  if impl(ghc >=9.8)
+    ghc-options: -Wno-missing-poly-kind-signatures
+
   ghcjs-options:      -dedupe
   exposed-modules:
     Web.Tumblr
     Web.Tumblr.Types
+
   build-depends:
-      aeson                 >= 2.0.0.0
+    , aeson                 >=2.0.0.0
     , aeson-casing
     , attoparsec
     , authenticate-oauth
@@ -44,6 +47,7 @@ library
     , open-browser
     , time                  >=1.4
     , unordered-containers  >=0.2
+
   -- , attoparsec-conduit >= 1.0.0
   -- , monad-control 
   -- , old-locale >= 1.0
@@ -60,18 +64,21 @@ test-suite humblr-test
     DerivingStrategies
     ImportQualifiedPost
     UnicodeSyntax
+
   ghc-options:
     -Weverything -Wno-unsafe -Wno-missing-import-lists
     -Wno-missing-export-lists -Wno-implicit-prelude
     -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
-    -Wno-missing-local-signatures
-    -Werror -haddock -threaded -rtsopts -with-rtsopts=-N
-  if impl(ghc >= 9.8)
-    ghc-options:
-      -Wno-missing-poly-kind-signatures
+    -Wno-missing-local-signatures -Werror -haddock -threaded -rtsopts
+    -with-rtsopts=-N
+
+  if impl(ghc >=9.8)
+    ghc-options: -Wno-missing-poly-kind-signatures
+
   ghcjs-options:      -dedupe
   other-modules:      Web.TumblrSpec
   build-depends:
-      base   >=4.16.4.0 && <4.21
+    , base   >=4.16.4.0 && <4.21
     , hspec
+
   build-tool-depends: hspec-discover:hspec-discover
